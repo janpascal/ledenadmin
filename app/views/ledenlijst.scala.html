@@ -3,14 +3,30 @@
 @main("Ledenlijst") {
     <h1>Ledenlijst</h1>
     <table> 
+    <tr>
+    <th>lidnr</th>
+    <th>naam1</th>
+    <th>naam2</th>
+    <th>adres</th>
+    <th>lid sinds</th>
+    </tr>
 	@for(lid <- leden) {
           <tr>
-	  <td>@lid.id</td>
-	  <td>@lid.name</td>
-	  <td>@lid.name2</td>
-	  <td>@lid.address</td>
-	  <td>@lid.lidSinds</td>
-          </tr>
+			  <td>@lid.id</td>
+			  <td>@if(lid.personen.size()>0){ 
+			      @lid.personen.get(0).name
+			      }</td>
+			  <td>@if(lid.personen.size()>1){ 
+			      @lid.personen.get(1).name
+			      }</td>
+			  <td>@lid.address</td>
+			  <td>@if(lid.lidSinds!=null) {
+			  		@lid.lidSinds.format("dd/MM/yyyy")
+			  	  }</td>
+	      </tr>
 	} 
     </table>
+    
+    <a class="btn success" id="import"
+    href="@routes.Leden.csvimport()">Importeer een CSV-ledenlijst</a>
 }

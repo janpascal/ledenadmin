@@ -17,9 +17,8 @@ public class Lid extends Model {
     @Id
     public Long id;
     
-    @Constraints.Required
-    public String name;
-    public String name2; // TODO make List<String> or List<Name>
+    @OneToMany(cascade=CascadeType.ALL)
+    public List<Persoon> personen;
     
     @Constraints.Required
     @Formats.DateTime(pattern="dd/MM/yyyy")
@@ -32,13 +31,15 @@ public class Lid extends Model {
     public List<String> rekeningnummers;
 
     public Lid(String name, Date lidSinds) {
-        this.name = name;
+        this.personen = new ArrayList<Persoon>();
+        this.personen.add(new Persoon(name));
         this.rekeningnummers = new ArrayList<String>();
         this.lidSinds = lidSinds;
     }
 
     public Lid(String name, String address, Date lidSinds) {
-        this.name = name;
+        this.personen = new ArrayList<Persoon>();
+        this.personen.add(new Persoon(name));
         this.address = address;
         this.lidSinds = lidSinds;
         this.rekeningnummers = new ArrayList<String>();
@@ -46,8 +47,9 @@ public class Lid extends Model {
 
     public Lid(Long id, String name1, String name2, String address, Date lidSinds) {
         this.id = id;
-        this.name = name1;
-        this.name2 = name2;
+        this.personen = new ArrayList<Persoon>();
+        this.personen.add(new Persoon(name1));
+        this.personen.add(new Persoon(name2));
         this.address = address;
         this.lidSinds = lidSinds;
         this.rekeningnummers = new ArrayList<String>();
@@ -61,7 +63,7 @@ public class Lid extends Model {
        find.ref(id).delete();
     }
      
-    public static Finder<Long,Lid> find = new Finder(
+    public static Finder<Long,Lid> find = new Finder<Long, Lid>(
             Long.class, Lid.class
           );
 }

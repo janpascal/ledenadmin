@@ -10,12 +10,12 @@ import play.data.validation.*;
 import com.avaje.ebean.*;
 
 @Entity
-public class Betaling extends Model {
+public class Afschrift extends Model {
 
-    public enum DebetCredit { DEBET, CREDIT };
+    public enum AfBij { AF, BIJ };
     
-    @GeneratedValue(strategy=GenerationType.AUTO, generator="betaling_seq_gen")
-    @SequenceGenerator(name="betaling_seq_gen", sequenceName="BETALING_SEQ")
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="afschrift_seq_gen")
+    @SequenceGenerator(name="afschrift_seq_gen", sequenceName="AFSCHRIFT_SEQ")
     @Id
     public Long id;
     
@@ -23,17 +23,17 @@ public class Betaling extends Model {
     public Long bedrag;
     
     @Constraints.Required
-    public DebetCredit dc;
+    public AfBij afbij;
     
     @Constraints.Required
     public String tegenrekening;
     
-    public String vermelding;
+    public String mededelingen;
 
-    public Betaling(Long bedrag, DebetCredit dc, String tegenrekening, String vermelding) {
+    public Afschrift(Long bedrag, AfBij afbij, String tegenrekening, String mededelingen) {
         this.bedrag = bedrag;
-        this.dc = dc;
+        this.afbij = afbij;
         this.tegenrekening = tegenrekening;
-        this.vermelding = vermelding;
+        this.mededelingen = mededelingen;
     }
 }

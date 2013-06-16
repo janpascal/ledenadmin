@@ -64,6 +64,7 @@ public class Leden extends Controller {
     FileNotFoundException, IOException {
         CSVReader reader = new CSVReader(new FileReader(file), ';');
         SimpleDateFormat dateFormatter = new SimpleDateFormat("d-M-yyyy");
+        SimpleDateFormat dateFormatter2 = new SimpleDateFormat("d/M/yyyy");
         String [] nextLine;
         // Read and check header line
         nextLine = reader.readNext();
@@ -90,7 +91,13 @@ public class Leden extends Controller {
             try {
               lidSinds = dateFormatter.parse(sindsString);
             } catch (Exception e) {
-              lidSinds = null;
+              try {
+                  lidSinds = dateFormatter2.parse(sindsString);
+              } catch (Exception e2) {
+                  System.out.println("Error parsing date string "+sindsString);
+                  e2.printStackTrace();
+                  lidSinds = null;
+              }
             }
             Lid lid = new Lid(id, name1, name2, address, lidSinds);    
             Lid.create(lid);

@@ -19,6 +19,7 @@ public class Lid extends Model {
     
     @Constraints.Required
     public String name;
+    public String name2; // TODO make List<String> or List<Name>
     
     @Constraints.Required
     @Formats.DateTime(pattern="dd/MM/yyyy")
@@ -38,6 +39,15 @@ public class Lid extends Model {
 
     public Lid(String name, String address, Date lidSinds) {
         this.name = name;
+        this.address = address;
+        this.lidSinds = lidSinds;
+        this.rekeningnummers = new ArrayList<String>();
+    }
+
+    public Lid(Long id, String name1, String name2, String address, Date lidSinds) {
+        this.id = id;
+        this.name = name1;
+        this.name2 = name2;
         this.address = address;
         this.lidSinds = lidSinds;
         this.rekeningnummers = new ArrayList<String>();

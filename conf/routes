@@ -7,7 +7,7 @@ GET     /                           controllers.Application.index()
 
 GET     /leden/csvimport            controllers.Leden.csvimport()
 GET     /leden/lijst                controllers.Leden.lijst()
-POST	/leden/upload				controllers.Leden.upload()
+POST	/leden/upload		    controllers.Leden.upload()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

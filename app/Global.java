@@ -17,9 +17,9 @@ public class Global extends GlobalSettings {
     static class InitialData {
         
         public static void insert(Application app) {
-            if(Ebean.find(Lid.class).findRowCount() == 0) {
-                Lid.create(new Lid("Jan-Pascal van Best", "Gerrit de Blankenlaan 6", new Date()));
-            }
+//            if(Ebean.find(Lid.class).findRowCount() == 0) {
+//                Lid.create(new Lid("Jan-Pascal van Best", "Gerrit de Blankenlaan 6", new Date()));
+//            }
         }
         
     }

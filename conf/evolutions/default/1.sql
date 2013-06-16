@@ -16,6 +16,7 @@ create table betaling (
 create table lid (
   id                        bigint not null,
   name                      varchar(255),
+  name2                     varchar(255),
   lid_sinds                 timestamp,
   lid_tot                   timestamp,
   address                   varchar(255),

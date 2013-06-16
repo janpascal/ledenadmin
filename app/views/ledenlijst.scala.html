@@ -2,9 +2,15 @@
 
 @main("Ledenlijst") {
     <h1>Ledenlijst</h1>
-    <ul> 
+    <table> 
 	@for(lid <- leden) {
-	  <li>@lid.name</li>
+          <tr>
+	  <td>@lid.id</td>
+	  <td>@lid.name</td>
+	  <td>@lid.name2</td>
+	  <td>@lid.address</td>
+	  <td>@lid.lidSinds</td>
+          </tr>
 	} 
-	</ul>
+    </table>
 }

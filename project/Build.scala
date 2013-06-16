@@ -11,7 +11,8 @@ object ApplicationBuild extends Build {
     // Add your project dependencies here,
     javaCore,
     javaJdbc,
-    javaEbean
+    javaEbean,
+    "net.sf.opencsv" % "opencsv" % "2.3"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

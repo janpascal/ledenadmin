@@ -1,0 +1,10 @@
+@(leden: List[Lid])
+
+@main("Ledenlijst") {
+    <h1>Ledenlijst</h1>
+    <ul> 
+	@for(lid <- leden) {
+	  <li>@lid.name</li>
+	} 
+	</ul>
+}

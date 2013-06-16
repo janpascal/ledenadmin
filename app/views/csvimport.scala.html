@@ -1,0 +1,15 @@
+
+
+@main("Import CSV ledenlijst") {
+    <h1>Importeer CSV ledenlijst</h1>
+
+@helper.form(action = routes.Leden.upload, 'enctype -> "multipart/form-data") {
+    
+    <input type="file" name="ledenlijst">
+    
+    <p>
+        <input type="submit">
+    </p>
+    
+}
+}

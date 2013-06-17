@@ -1,0 +1,52 @@
+@(factuur: FactuurContributie)
+
+@showAfschrift(afschrift: Afschrift) = {
+    <td>@afschrift.datum.format("dd/MM/yyyy")</td>
+    <td>@afschrift.naam</td>
+    <td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td>
+    <td>@afschrift.afbij</td>
+    <td>@afschrift.tegenrekening</td>
+    <td>@afschrift.mededelingen</td>
+}
+
+@main("Factuur") {
+    <h1>Factuur contributie @factuur.jaar</h1>
+    <table> 
+    <tr><td>jaar</td><td>@factuur.jaar</td></tr>
+    <tr><td>datum</td><td>@factuur.datum.format("dd/MM/yyyy")</td></tr>
+    <tr><td>lid</td> <td>@factuur.lid.getFirstName()</td></tr>
+    <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td></tr>
+    <tr><td>betaald</td>
+			  <td>@if(factuur.isBetaald()){
+                            Ja
+                          } else {
+                            Nee
+                          }</td></tr>
+    @if(factuur.betaling != null) {
+        <tr><td>betaling</td>
+        @showAfschrift(factuur.betaling)
+        </tr>
+    }
+    </table>
+    <h2>Mogelijke betalingen:</h2>
+    <table>
+      @for( afschrift <- factuur.possiblePayments() ) {
+        <tr>
+            <td>
+              @if(factuur.betaling != null && afschrift.id == factuur.betaling.id) {
+                @helper.form(action = routes.Facturen.wisBetaling(factuur.id)) {
+                    <input type="submit" value="Wis">
+                }
+              } else {
+                @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
+                    <input type="submit" value="Kies">
+                }
+              }
+            </td>
+            @showAfschrift(afschrift)
+        </tr>
+      }
+    </table>
+
+    <a href="@routes.Facturen.lijst()">Alle facturen</a>
+}

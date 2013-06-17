@@ -1,0 +1,15 @@
+
+
+@main("Import CSV bankafschrift") {
+    <h1>Importeer CSV bankafschrift</h1>
+
+@helper.form(action = routes.Afschriften.upload, 'enctype -> "multipart/form-data") {
+    
+    <input type="file" name="bestand">
+    
+    <p>
+        <input type="submit">
+    </p>
+    
+}
+}

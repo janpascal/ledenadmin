@@ -1,6 +1,8 @@
 package models;
 
+import java.math.BigDecimal;
 import java.util.*;
+
 import javax.persistence.*;
 
 import play.db.ebean.*;
@@ -20,7 +22,10 @@ public class Afschrift extends Model {
     public Long id;
     
     @Constraints.Required
-    public Long bedrag;
+    public Date datum;
+
+    @Constraints.Required
+    public BigDecimal bedrag;
     
     @Constraints.Required
     public AfBij afbij;
@@ -28,12 +33,24 @@ public class Afschrift extends Model {
     @Constraints.Required
     public String tegenrekening;
     
+    public String naam;
     public String mededelingen;
 
-    public Afschrift(Long bedrag, AfBij afbij, String tegenrekening, String mededelingen) {
+    public Afschrift(Date datum, String naam, BigDecimal bedrag, AfBij afbij, String tegenrekening, String mededelingen) {
+        this.datum = datum;
+        this.naam = naam;
         this.bedrag = bedrag;
         this.afbij = afbij;
         this.tegenrekening = tegenrekening;
         this.mededelingen = mededelingen;
     }
+
+    public static void create(Afschrift afschrift) {
+        afschrift.save();
+    }
+
+
+    public static Finder<Long,Afschrift> find = new Finder<Long, Afschrift>(
+            Long.class, Afschrift.class
+          );
 }

@@ -1,0 +1,34 @@
+@(facturen: List[FactuurContributie])
+
+@main("Lijst facturen") {
+    <h1>Facturen</h1>
+    Aantal facturen in database: @facturen.size()
+    <table> 
+    <tr>
+    <th>jaar</th>
+    <th>datum</th>
+    <th>betaald</th>
+    <th>lid</th>
+    <th>bedrag</th>
+    <th colspan="2">mogelijke betalingen</th>
+    </tr>
+	@for(factuur <- facturen) {
+          <tr>
+			  <td>@factuur.jaar</td>
+			  <td>@factuur.datum.format("dd/MM/yyyy")</td>
+			  <td><a href="@routes.Facturen.toon(factuur.id)">@if(factuur.isBetaald()){
+                            Ja
+                          } else {
+                            Nee
+                          }</a></td>
+			  <td>@factuur.lid.getFirstName()</td>
+			  <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
+                          @for( afschrift <- factuur.possiblePayments() ) {
+			    <td>@afschrift.datum.format("dd/MM/yyyy")</td>
+                          }
+                          <td>
+	      </tr>
+	} 
+    </table>
+    
+}

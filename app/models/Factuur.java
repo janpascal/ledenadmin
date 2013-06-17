@@ -1,6 +1,7 @@
 package models;
 
 import java.util.*;
+import java.math.BigDecimal;
 import javax.persistence.*;
 
 import play.db.ebean.*;
@@ -19,11 +20,21 @@ public class Factuur extends Model {
     public Long id;
     
     @Constraints.Required
-    public Long bedrag;
+    public BigDecimal bedrag;
     
+    @Constraints.Required
+    public Date datum;
+    
+    @Constraints.Required
+    @ManyToOne
+    public Lid lid;
+    
+    @ManyToOne
     public Afschrift betaling;
 
-    public Factuur(Long bedrag) {
+    public Factuur(Date datum, Lid lid, BigDecimal bedrag) {
+        this.datum = datum;
+        this.lid = lid;
         this.bedrag = bedrag;
     }
     

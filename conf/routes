@@ -5,9 +5,21 @@
 # Home page
 GET     /                           controllers.Application.index()
 
-GET     /leden/csvimport            controllers.Leden.csvimport()
 GET     /leden/lijst                controllers.Leden.lijst()
+GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)
+POST	/leden/savelid/:id	    controllers.Leden.saveLid(id: Long)
+GET     /leden/betaalstatus		controllers.Leden.betaalStatus()
+GET     /leden/csvimport            controllers.Leden.csvimport()
 POST	/leden/upload		    controllers.Leden.upload()
+
+GET     /afschriften/lijst                controllers.Afschriften.lijst()
+GET     /afschriften/csvimport    controllers.Afschriften.csvimport()
+POST	/afschriften/upload		    controllers.Afschriften.upload()
+
+GET     /facturen/lijst                controllers.Facturen.lijst()
+GET     /facturen/toon/:id      controllers.Facturen.toon(id: Long)
+POST    /facturen/markeerBetaling/:factuurId/:betalingId controllers.Facturen.markeerBetaling(factuurId: Long, betalingId: Long)
+POST    /facturen/wisBetaling/:factuurId controllers.Facturen.wisBetaling(factuurId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

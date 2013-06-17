@@ -1,0 +1,19 @@
+@(afschrift: Afschrift)
+
+@main("Afschriften") {
+    <h1>Bankafschrift</h1>
+    <table> 
+    <tr><td>datum</td><td>@afschrift.datum.format("dd/MM/yyyy")</td></tr>
+    <tr><td>naam</td> <td>@afschrift.naam</td></tr>
+    <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td></tr>
+    <tr><td>af/bij</td> <td>@afschrift.afbij</td></tr>
+    <tr><td>tegenrekening</td> <td>@afschrift.tegenrekening</td></tr>
+    <tr><td>mededelingen</td> <td>@afschrift.mededelingen</td></tr>
+    </table>
+
+
+    
+    <a class="btn success" id="import"
+    href="@routes.Afschriften.csvimport()">Importeer een CSV
+    bankafschriftendownloadbestand</a>
+}

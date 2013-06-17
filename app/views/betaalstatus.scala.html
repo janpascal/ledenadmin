@@ -1,0 +1,33 @@
+@(leden: List[Lid], jaren:List[Integer])
+
+@main("Betaalstatus") {
+    <h1>Betaalstatus</h1>
+    <table> 
+    <tr>
+    <th>lidnr</th>
+    <th>naam</th>
+    <th>adres</th>
+    @for(jaar <- jaren) {
+    	<th>@jaar</th>
+    }
+    </tr>
+	@for(lid <- leden) {
+          <tr>
+			  <td>@lid.id</td>
+			  <td>@lid.getFirstName()</td>
+			  <td>@lid.address</td>
+   		      @for(jaar <- jaren) {
+			   	<td>@if(lid.contributieBetaald(jaar)) {
+			   	      @lid.contributieBetaaldOp(jaar).format("dd/MM/yyyy")
+			   	    } else {
+			   	      -
+			   	    } 
+			   	</td>
+			  }
+	      </tr>
+	} 
+    </table>
+    
+    <a class="btn success" id="import"
+    href="@routes.Leden.csvimport()">Importeer een CSV-ledenlijst</a>
+}

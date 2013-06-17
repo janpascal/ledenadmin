@@ -1,0 +1,29 @@
+@(afschriften: List[Afschrift])
+
+@main("Lijst afschriften") {
+    <h1>Bankafschriften</h1>
+    <table> 
+    <tr>
+    <th>datum</th>
+    <th>naam</th>
+    <th>bedrag</th>
+    <th>af/bij</th>
+    <th>tegenrekening</th>
+    <th>mededelingen</th>
+    </tr>
+	@for(afschrift <- afschriften) {
+          <tr>
+			  <td>@afschrift.datum.format("dd/MM/yyyy")</td>
+			  <td>@afschrift.naam</td>
+			  <td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td>
+			  <td>@afschrift.afbij</td>
+			  <td>@afschrift.tegenrekening</td>
+			  <td>@afschrift.mededelingen</td>
+	      </tr>
+	} 
+    </table>
+    
+    <a class="btn success" id="import"
+    href="@routes.Afschriften.csvimport()">Importeer een CSV
+    bankafschriftendownloadbestand</a>
+}

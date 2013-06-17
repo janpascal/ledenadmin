@@ -9,10 +9,11 @@
     <th>naam2</th>
     <th>adres</th>
     <th>lid sinds</th>
+    <th>bankrekeningen</th>
     </tr>
 	@for(lid <- leden) {
           <tr>
-			  <td>@lid.id</td>
+			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.id</a></td>
 			  <td>@if(lid.personen.size()>0){ 
 			      @lid.personen.get(0).name
 			      }</td>
@@ -23,6 +24,9 @@
 			  <td>@if(lid.lidSinds!=null) {
 			  		@lid.lidSinds.format("dd/MM/yyyy")
 			  	  }</td>
+                          <td>@for( rek <- lid.rekeningnummers ) {
+                            @rek.rekeningnummer
+                          }</td>
 	      </tr>
 	} 
     </table>

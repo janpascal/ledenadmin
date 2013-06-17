@@ -12,6 +12,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import models.*;
 import play.*;
+import play.data.Form;
+import static play.data.Form.*;
 import play.libs.F.Promise;
 import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
@@ -29,6 +31,34 @@ public class Leden extends Controller {
     public static Result lijst() {
         List<Lid> leden = Lid.find.all();
         return ok(ledenlijst.render(leden));
+    }
+    
+    public static Result bewerkLid(Long id) {
+        Lid lid = Lid.find.byId(id);
+        Form<Lid> form = form(Lid.class);
+        form.fill(lid);
+        return ok(editlid.render(id, form));
+    }
+    
+    public static Result saveLid(Long id) {
+        Form<Lid> form = form(Lid.class).bindFromRequest();
+        if(form.hasErrors()) {
+            return badRequest(editlid.render(id,form));
+        }
+        form.get().save();
+        // flash()
+        return bewerkLid(id);
+    }
+    
+    public static Result betaalStatus() {
+        List<Lid> leden = Lid.find.all();
+        List<Integer> jaren = new ArrayList<Integer>();
+        jaren.add(2009);
+        jaren.add(2010);
+        jaren.add(2011);
+        jaren.add(2012);
+        jaren.add(2013);
+        return ok(betaalstatus.render(leden, jaren));
     }
     
     public static Result csvimport() {
@@ -88,15 +118,19 @@ public class Leden extends Controller {
               id = null;
             }
             Date lidSinds;
-            try {
-              lidSinds = dateFormatter.parse(sindsString);
-            } catch (Exception e) {
+            if (sindsString.isEmpty()) {
+              lidSinds = null;
+            } else {
               try {
-                  lidSinds = dateFormatter2.parse(sindsString);
-              } catch (Exception e2) {
-                  System.out.println("Error parsing date string "+sindsString);
-                  e2.printStackTrace();
-                  lidSinds = null;
+                lidSinds = dateFormatter.parse(sindsString);
+              } catch (Exception e) {
+                try {
+                    lidSinds = dateFormatter2.parse(sindsString);
+                } catch (Exception e2) {
+                    System.out.println("Error parsing date string "+sindsString);
+                    e2.printStackTrace();
+                    lidSinds = null;
+                }
               }
             }
             Lid lid = new Lid(id, name1, name2, address, lidSinds);    

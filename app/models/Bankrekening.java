@@ -20,7 +20,8 @@ public class Bankrekening extends Model {
 
     @ManyToOne
     public Lid lid;
-    
+   
+    @Constraints.Required
     public String rekeningnummer;
 
     public Bankrekening(Lid lid, String nummer) {

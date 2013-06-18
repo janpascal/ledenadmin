@@ -5,23 +5,38 @@
 
 create table afschrift (
   id                        bigint not null,
-  bedrag                    bigint,
+  datum                     timestamp,
+  bedrag                    decimal(38),
   afbij                     integer,
   tegenrekening             varchar(255),
+  naam                      varchar(255),
   mededelingen              varchar(255),
   constraint ck_afschrift_afbij check (afbij in (0,1)),
   constraint pk_afschrift primary key (id))
 ;
 
+create table bankrekening (
+  id                        bigint not null,
+  lid_id                    bigint,
+  rekeningnummer            varchar(255),
+  constraint pk_bankrekening primary key (id))
+;
+
 create table factuur (
   id                        bigint not null,
-  bedrag                    bigint,
+  bedrag                    decimal(38),
+  datum                     timestamp,
+  lid_id                    bigint,
+  betaling_id               bigint,
   constraint pk_factuur primary key (id))
 ;
 
 create table factuur_contributie (
   id                        bigint not null,
-  bedrag                    bigint,
+  bedrag                    decimal(38),
+  datum                     timestamp,
+  lid_id                    bigint,
+  betaling_id               bigint,
   jaar                      integer,
   constraint pk_factuur_contributie primary key (id))
 ;
@@ -36,13 +51,15 @@ create table lid (
 
 create table persoon (
   id                        bigint not null,
-  lid_id                    bigint not null,
+  lid_id                    bigint,
   name                      varchar(255),
   email                     varchar(255),
   constraint pk_persoon primary key (id))
 ;
 
 create sequence afschrift_seq;
+
+create sequence bankrekening_seq;
 
 create sequence factuur_seq;
 
@@ -52,8 +69,18 @@ create sequence lid_seq;
 
 create sequence persoon_seq;
 
-alter table persoon add constraint fk_persoon_lid_1 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
-create index ix_persoon_lid_1 on persoon (lid_id);
+alter table bankrekening add constraint fk_bankrekening_lid_1 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
+create index ix_bankrekening_lid_1 on bankrekening (lid_id);
+alter table factuur add constraint fk_factuur_lid_2 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
+create index ix_factuur_lid_2 on factuur (lid_id);
+alter table factuur add constraint fk_factuur_betaling_3 foreign key (betaling_id) references afschrift (id) on delete restrict on update restrict;
+create index ix_factuur_betaling_3 on factuur (betaling_id);
+alter table factuur_contributie add constraint fk_factuur_contributie_lid_4 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
+create index ix_factuur_contributie_lid_4 on factuur_contributie (lid_id);
+alter table factuur_contributie add constraint fk_factuur_contributie_betalin_5 foreign key (betaling_id) references afschrift (id) on delete restrict on update restrict;
+create index ix_factuur_contributie_betalin_5 on factuur_contributie (betaling_id);
+alter table persoon add constraint fk_persoon_lid_6 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
+create index ix_persoon_lid_6 on persoon (lid_id);
 
 
 
@@ -62,6 +89,8 @@ create index ix_persoon_lid_1 on persoon (lid_id);
 SET REFERENTIAL_INTEGRITY FALSE;
 
 drop table if exists afschrift;
+
+drop table if exists bankrekening;
 
 drop table if exists factuur;
 
@@ -74,6 +103,8 @@ drop table if exists persoon;
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists afschrift_seq;
+
+drop sequence if exists bankrekening_seq;
 
 drop sequence if exists factuur_seq;
 

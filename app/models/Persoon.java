@@ -17,17 +17,22 @@ public class Persoon extends Model {
     @Id
     public Long id;
     
+    @ManyToOne
+    public Lid lid;
+    
     @Constraints.Required
     public String name;
     
     public String email;
     
 
-    public Persoon(String name) {
+    public Persoon(Lid lid, String name) {
+        this.lid = lid; 
         this.name = name;
     }
 
-    public Persoon(String name, String email) {
+    public Persoon(Lid lid, String name, String email) {
+        this.lid = lid; 
         this.name = name;
         this.email = email;
     }

@@ -34,10 +34,19 @@ public class Leden extends Controller {
     }
     
     public static Result bewerkLid(Long id) {
+        Form<Lid> myForm = form(Lid.class).fill(Lid.find.byId(id));
         Lid lid = Lid.find.byId(id);
-        Form<Lid> form = form(Lid.class);
-        form.fill(lid);
-        return ok(editlid.render(id, form));
+        System.out.println("Editing "+lid.toString());
+        System.out.print("Bankrekeningen:");
+        for(Bankrekening rek: lid.rekeningnummers) {
+            System.out.print(" "+rek.rekeningnummer);
+        }
+        System.out.println();
+        System.out.println("Form information:");
+        System.out.println(myForm.value());
+        System.out.println(myForm);
+        System.out.println(myForm.data());
+        return ok(editlid.render(id, myForm));
     }
     
     public static Result saveLid(Long id) {
@@ -45,9 +54,19 @@ public class Leden extends Controller {
         if(form.hasErrors()) {
             return badRequest(editlid.render(id,form));
         }
-        form.get().save();
+        form.get().update(id);
+        System.out.println("Form information:");
+        System.out.println(form.value());
+        System.out.println(form);
+        System.out.println(form.data());
+        Lid lid = form.get();
+        System.out.println("Updating"+lid.toString());
+        System.out.print("    Bankrekeningen:");
+        for(Bankrekening rek: lid.rekeningnummers) {
+            System.out.print(" "+rek.rekeningnummer);
+        }
         // flash()
-        return bewerkLid(id);
+        return lijst();
     }
     
     public static Result betaalStatus() {
@@ -134,6 +153,7 @@ public class Leden extends Controller {
               }
             }
             Lid lid = new Lid(id, name1, name2, address, lidSinds);    
+            //Lid lid = new Lid(name1, name2, address, lidSinds);    
             Lid.create(lid);
         }
     }

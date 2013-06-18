@@ -1,36 +1,30 @@
-@(id: Long, form: Form[Lid])
+@(id: Long, myForm: Form[Lid])
 
 @main("Bewerk lid") {
     <h1>Bewerk lid</h1>
 
+    @myForm
+<br>
+    @myForm.value()
+<br>
+    @myForm.field("personen").value()
+<br>
+    @myForm.field("rekeningnummers").value()
+<br>
+
     @helper.form(action = routes.Leden.saveLid(id)) {
-    <dl class=" " id="lidnr">
-        <dt><label for="lidnr">lidnr</label></dt>
-        <dd><div id="lidnr" name="lidnr">@id</div></dd>
-    </dl>
-    @helper.inputText(form("naam1"), '_label -> "Naam")
-    @*
-    <tr><td>naam2</td><td>@helper.inputText(form("naam2"))</td></tr>
-    <tr><td>adres</td><td></td></tr>
-    <tr><td>lid sinds</td><td></td></tr>
-    <tr><td>bankrekeningen</td><td></td></tr>
-          <tr>
-			  <td><a href="@routes.Leden.bewerk(@lid.id)">@lid.id</a></td>
-			  <td>@if(lid.personen.size()>0){ 
-			      @lid.personen.get(0).name
-			      }</td>
-			  <td>@if(lid.personen.size()>1){ 
-			      @lid.personen.get(1).name
-			      }</td>
-			  <td>@lid.address</td>
-			  <td>@if(lid.lidSinds!=null) {
-			  		@lid.lidSinds.format("dd/MM/yyyy")
-			  	  }</td>
-                          <td>@for( rek <- lid.rekeningnummers ) {
-                            @rek.rekeningnummer
-                          }</td>
-	      </tr>
-        *@
+    <fieldset>
+    <legend>Lid @id</legend>
+    @helper.repeat(myForm("personen"), min = 2) { persoonField =>
+            @helper.inputText(persoonField("name"), '_label -> "Naam" )
+    }
+    @helper.inputText(myForm("address"), '_label -> "Adres")
+    @helper.inputDate(myForm("lidSinds"), '_label -> "Lid sinds")
+
+    @helper.repeat(myForm("rekeningnummers"), min = 1) { rekeningField =>
+            @helper.inputText(rekeningField("rekeningnummer"))
+    }
+    </fieldset>
     <input type="submit" value="Opslaan">
     }
 }

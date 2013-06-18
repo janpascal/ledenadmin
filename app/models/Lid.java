@@ -18,9 +18,9 @@ public class Lid extends Model {
     @Id
     public Long id;
     
-    @OneToMany(cascade=CascadeType.ALL)
-    @Constraints.MinLength(value=1)
-    @Constraints.MaxLength(value=2)
+    //@Constraints.MinLength(value=1)
+    //@Constraints.MaxLength(value=2)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
     public List<Persoon> personen;
     
     @Constraints.Required
@@ -28,22 +28,24 @@ public class Lid extends Model {
     public Date lidSinds;
     
     public Date lidTot;
-    
+   
     public String address;
    
-    @OneToMany(mappedBy="lid")
+    //@OneToMany//(mappedBy="lid")
+    //@OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
     public List<Bankrekening> rekeningnummers;
 
     public Lid(String name, Date lidSinds) {
         this.personen = new ArrayList<Persoon>();
-        this.personen.add(new Persoon(name));
+        this.personen.add(new Persoon(this, name));
         this.rekeningnummers = new ArrayList<Bankrekening>();
         this.lidSinds = lidSinds;
     }
 
     public Lid(String name, String address, Date lidSinds) {
         this.personen = new ArrayList<Persoon>();
-        this.personen.add(new Persoon(name));
+        this.personen.add(new Persoon(this, name));
         this.address = address;
         this.lidSinds = lidSinds;
         this.rekeningnummers = new ArrayList<Bankrekening>();
@@ -52,11 +54,26 @@ public class Lid extends Model {
     public Lid(Long id, String name1, String name2, String address, Date lidSinds) {
         this.id = id;
         this.personen = new ArrayList<Persoon>();
-        this.personen.add(new Persoon(name1));
-        this.personen.add(new Persoon(name2));
+        this.personen.add(new Persoon(this, name1));
+        if(name2!=null && !name2.isEmpty()) {
+            this.personen.add(new Persoon(this, name2));
+        }
         this.address = address;
         this.lidSinds = lidSinds;
         this.rekeningnummers = new ArrayList<Bankrekening>();
+    }
+
+    public Lid(String name1, String name2, String address, Date lidSinds) {
+        this.personen = new ArrayList<Persoon>();
+        this.personen.add(new Persoon(this, name1));
+        this.personen.add(new Persoon(this, name2));
+        this.address = address;
+        this.lidSinds = lidSinds;
+        this.rekeningnummers = new ArrayList<Bankrekening>();
+    }
+
+    public String toString() {
+      return "Lid "+id+" ("+getFirstName()+")";
     }
     
     public String getFirstName() {
@@ -96,7 +113,6 @@ public class Lid extends Model {
     public Bankrekening addRekening(String rekeningnummer) {
       Bankrekening rek = new Bankrekening(this, rekeningnummer);
       rekeningnummers.add(rek);
-      Bankrekening.create(rek);
       return rek;
     }
     

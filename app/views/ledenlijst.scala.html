@@ -24,8 +24,8 @@
 			  <td>@if(lid.lidSinds!=null) {
 			  		@lid.lidSinds.format("dd/MM/yyyy")
 			  	  }</td>
-                          <td>@for( rek <- lid.rekeningnummers ) {
-                            @rek.rekeningnummer
+                          <td>@for( rek <- lid.bankrekeningen ) {
+                            @rek.nummer
                           }</td>
 	      </tr>
 	} 

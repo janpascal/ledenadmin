@@ -57,9 +57,7 @@ public class Global extends GlobalSettings {
                 factuur.betaling = afschrift;
                 factuur.save();
                */ 
-                Lid jp = Lid.find.byId((long) 5);
-                jp.addRekening("551242663");
-                jp.update(jp.id);
+                System.out.println("Creating fake bank accounts");
                 int count=1;
                 for(Lid lid: Lid.find.all()) {
                   lid.addRekening(new Integer(count*5462).toString());
@@ -67,6 +65,17 @@ public class Global extends GlobalSettings {
                   count++;
                   if(count>10) break;
                 }
+
+                System.out.println("Filling in known bank accounts");
+                Lid jp = Lid.find.byId((long) 5);
+                jp.addRekening("551242663");
+                jp.update(jp.id);
+                Lid aad = Lid.find.where().ilike("personen.name","%de Vogel%").findUnique();
+                if (aad!=null) {
+                    aad.addRekening("8061902");
+                    aad.update(aad.id);
+                }
+
                 /*
                 System.out.println(jp.getFirstName());
                 List<FactuurContributie> facturen = 

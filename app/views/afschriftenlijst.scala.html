@@ -10,6 +10,7 @@
     <th>af/bij</th>
     <th>tegenrekening</th>
     <th>mededelingen</th>
+    <th>betaling voor</th>
     </tr>
 	@for(afschrift <- afschriften) {
           <tr>
@@ -19,6 +20,11 @@
 			  <td>@afschrift.afbij</td>
 			  <td>@afschrift.tegenrekening</td>
 			  <td>@afschrift.mededelingen</td>
+			  <td>
+                              @for(factuur <- afschrift.betaaldeFacturen) {
+                                  @factuur
+                              }
+                          </td>
 	      </tr>
 	} 
     </table>

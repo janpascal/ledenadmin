@@ -12,6 +12,9 @@ import play.data.validation.*;
 import com.avaje.ebean.*;
 
 @Entity
+@Inheritance
+@DiscriminatorColumn(name = "_type", discriminatorType = DiscriminatorType.INTEGER)
+@DiscriminatorValue("0")
 public class Factuur extends Model {
 
     @GeneratedValue(strategy=GenerationType.AUTO, generator="factuur_seq_gen")
@@ -42,6 +45,23 @@ public class Factuur extends Model {
         return betaling != null;
     }
     
+    public List<Afschrift> possiblePayments() {
+        if(lid.bankrekeningen.isEmpty()) {
+          return new ArrayList<Afschrift>();
+        }
+        // tegenrekening in bekende bankrekeningen lid
+        // misschien: datum overboeking na datum factuur
+        Junction<Afschrift> junction = 
+                Afschrift.find
+                  .where()
+                    .disjunction();
+        for(Bankrekening rek: lid.bankrekeningen) {
+          junction.add(Expr.eq("tegenrekening", rek.nummer));
+        }
+        List<Afschrift> result = junction.findList(); 
+        return result;
+    }
+
     public static Finder<Long,Factuur> find = new Finder<Long, Factuur>(
             Long.class, Factuur.class
     );

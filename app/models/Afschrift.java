@@ -36,6 +36,9 @@ public class Afschrift extends Model {
     public String naam;
     public String mededelingen;
 
+    @OneToMany(mappedBy="betaling")
+    public List<Factuur> betaaldeFacturen;
+
     public Afschrift(Date datum, String naam, BigDecimal bedrag, AfBij afbij, String tegenrekening, String mededelingen) {
         this.datum = datum;
         this.naam = naam;
@@ -43,12 +46,12 @@ public class Afschrift extends Model {
         this.afbij = afbij;
         this.tegenrekening = tegenrekening;
         this.mededelingen = mededelingen;
+        this.betaaldeFacturen = new ArrayList<Factuur>();
     }
 
     public static void create(Afschrift afschrift) {
         afschrift.save();
     }
-
 
     public static Finder<Long,Afschrift> find = new Finder<Long, Afschrift>(
             Long.class, Afschrift.class

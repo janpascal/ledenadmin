@@ -37,36 +37,19 @@ public class Leden extends Controller {
         Form<Lid> myForm = form(Lid.class).fill(Lid.find.byId(id));
         Lid lid = Lid.find.byId(id);
         System.out.println("Editing "+lid.toString());
-        System.out.print("Bankrekeningen:");
-        for(Bankrekening rek: lid.rekeningnummers) {
-            System.out.print(" "+rek.rekeningnummer);
-        }
-        System.out.println();
-        System.out.println("Form information:");
-        System.out.println(myForm.value());
-        System.out.println(myForm);
-        System.out.println(myForm.data());
         return ok(editlid.render(id, myForm));
     }
     
     public static Result saveLid(Long id) {
-        Form<Lid> form = form(Lid.class).bindFromRequest();
-        if(form.hasErrors()) {
-            return badRequest(editlid.render(id,form));
+        Form<Lid> myForm = form(Lid.class).bindFromRequest();
+        if(myForm.hasErrors()) {
+            return badRequest(editlid.render(id,myForm));
         }
-        form.get().update(id);
-        System.out.println("Form information:");
-        System.out.println(form.value());
-        System.out.println(form);
-        System.out.println(form.data());
-        Lid lid = form.get();
+        myForm.get().update(id);
+        Lid lid = myForm.get();
         System.out.println("Updating"+lid.toString());
-        System.out.print("    Bankrekeningen:");
-        for(Bankrekening rek: lid.rekeningnummers) {
-            System.out.print(" "+rek.rekeningnummer);
-        }
         // flash()
-        return lijst();
+        return redirect(routes.Leden.lijst());
     }
     
     public static Result betaalStatus() {
@@ -102,7 +85,7 @@ public class Leden extends Controller {
             flash("error", "File not found");
             return redirect(routes.Application.index());    
           }
-          return ok("File uploaded");
+          return redirect(routes.Leden.lijst());    
         } else {
           flash("error", "Missing file");
           return redirect(routes.Application.index());    

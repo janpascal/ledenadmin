@@ -18,8 +18,6 @@ public class Lid extends Model {
     @Id
     public Long id;
     
-    //@Constraints.MinLength(value=1)
-    //@Constraints.MaxLength(value=2)
     @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
     public List<Persoon> personen;
     
@@ -31,15 +29,13 @@ public class Lid extends Model {
    
     public String address;
    
-    //@OneToMany//(mappedBy="lid")
-    //@OneToMany(cascade=CascadeType.ALL)
     @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
-    public List<Bankrekening> rekeningnummers;
+    public List<Bankrekening> bankrekeningen;
 
     public Lid(String name, Date lidSinds) {
         this.personen = new ArrayList<Persoon>();
         this.personen.add(new Persoon(this, name));
-        this.rekeningnummers = new ArrayList<Bankrekening>();
+        this.bankrekeningen = new ArrayList<Bankrekening>();
         this.lidSinds = lidSinds;
     }
 
@@ -48,7 +44,7 @@ public class Lid extends Model {
         this.personen.add(new Persoon(this, name));
         this.address = address;
         this.lidSinds = lidSinds;
-        this.rekeningnummers = new ArrayList<Bankrekening>();
+        this.bankrekeningen = new ArrayList<Bankrekening>();
     }
 
     public Lid(Long id, String name1, String name2, String address, Date lidSinds) {
@@ -60,7 +56,7 @@ public class Lid extends Model {
         }
         this.address = address;
         this.lidSinds = lidSinds;
-        this.rekeningnummers = new ArrayList<Bankrekening>();
+        this.bankrekeningen = new ArrayList<Bankrekening>();
     }
 
     public Lid(String name1, String name2, String address, Date lidSinds) {
@@ -69,7 +65,7 @@ public class Lid extends Model {
         this.personen.add(new Persoon(this, name2));
         this.address = address;
         this.lidSinds = lidSinds;
-        this.rekeningnummers = new ArrayList<Bankrekening>();
+        this.bankrekeningen = new ArrayList<Bankrekening>();
     }
 
     public String toString() {
@@ -110,9 +106,9 @@ public class Lid extends Model {
         return factuur.betaling.datum;
     }
 
-    public Bankrekening addRekening(String rekeningnummer) {
-      Bankrekening rek = new Bankrekening(this, rekeningnummer);
-      rekeningnummers.add(rek);
+    public Bankrekening addRekening(String nummer) {
+      Bankrekening rek = new Bankrekening(this, nummer);
+      bankrekeningen.add(rek);
       return rek;
     }
     

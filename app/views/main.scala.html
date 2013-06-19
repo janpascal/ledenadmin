@@ -11,6 +11,22 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
     <body>
-        @content
+        <header class="topbar">
+            <h1 class="fill">
+                <a href="@routes.Application.index()">Ledenadministratie</a>
+                &mdash;
+                <a href="@routes.Leden.lijst">Ledenlijst</a>
+                &mdash;
+                <a href="@routes.Leden.betaalStatus">Betaalstatus</a>
+                &mdash;
+                <a href="@routes.Afschriften.lijst">Afschriften</a>
+                &mdash;
+                <a href="@routes.Facturen.lijst">Facturen</a>
+            </h1>
+        </header>
+
+        <section id="main">
+          @content
+        </section>
     </body>
 </html>

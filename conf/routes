@@ -18,6 +18,7 @@ POST	/afschriften/upload		    controllers.Afschriften.upload()
 
 GET     /facturen/lijst                controllers.Facturen.lijst()
 GET     /facturen/toon/:id      controllers.Facturen.toon(id: Long)
+POST    /facturen/savefactuur/:id      controllers.Facturen.saveFactuur(id: Long)
 POST    /facturen/markeerBetaling/:factuurId/:betalingId controllers.Facturen.markeerBetaling(factuurId: Long, betalingId: Long)
 POST    /facturen/wisBetaling/:factuurId controllers.Facturen.wisBetaling(factuurId: Long)
 

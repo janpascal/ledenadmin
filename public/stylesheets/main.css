@@ -74,6 +74,6 @@ body {
     margin-bottom: 20px;
 }
 
-.query_template, .profile_template {
+.persoon_template, .bankrekening_template {
     display: none;
 }

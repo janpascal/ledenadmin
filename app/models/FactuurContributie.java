@@ -12,6 +12,7 @@ import play.data.validation.*;
 import com.avaje.ebean.*;
 
 @Entity
+@DiscriminatorValue("1")
 public class FactuurContributie extends Factuur {
 
     public int jaar;
@@ -26,25 +27,11 @@ public class FactuurContributie extends Factuur {
         this.jaar = jaar;
     }
 
-    public List<Afschrift> possiblePayments() {
-        if(lid.rekeningnummers.isEmpty()) {
-          return new ArrayList<Afschrift>();
-        }
-        // tegenrekening in bekende rekeningnummers lid
-        // misschien: datum overboeking na datum factuur
-        Junction<Afschrift> junction = 
-                Afschrift.find
-                  .where()
-                    .conjunction();
-        for(Bankrekening nr: lid.rekeningnummers) {
-          junction.add(Expr.eq("tegenrekening", nr.rekeningnummer));
-        }
-        List<Afschrift> result = junction.findList(); 
-        return result;
-    }
-    
     public static Finder<Long,FactuurContributie> find = new Finder<Long, FactuurContributie>(
             Long.class, FactuurContributie.class
     );
 
+    public String toString() {
+      return "Contributie "+jaar;
+    }
 }

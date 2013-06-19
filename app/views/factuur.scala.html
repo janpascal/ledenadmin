@@ -1,4 +1,4 @@
-@(factuur: FactuurContributie)
+@(id: Long, factuur: FactuurContributie)
 
 @showAfschrift(afschrift: Afschrift) = {
     <td>@afschrift.datum.format("dd/MM/yyyy")</td>
@@ -11,23 +11,25 @@
 
 @main("Factuur") {
     <h1>Factuur contributie @factuur.jaar</h1>
-    <table> 
-    <tr><td>jaar</td><td>@factuur.jaar</td></tr>
-    <tr><td>datum</td><td>@factuur.datum.format("dd/MM/yyyy")</td></tr>
-    <tr><td>lid</td> <td>@factuur.lid.getFirstName()</td></tr>
-    <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td></tr>
-    <tr><td>betaald</td>
-			  <td>@if(factuur.isBetaald()){
-                            Ja
-                          } else {
-                            Nee
-                          }</td></tr>
-    @if(factuur.betaling != null) {
-        <tr><td>betaling</td>
-        @showAfschrift(factuur.betaling)
-        </tr>
+    @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
+        <table> 
+        <tr><td>jaar</td><td>@factuur.jaar</td></tr>
+        <tr><td>datum</td><td>@factuur.datum.format("dd/MM/yyyy")</td></tr>
+        <tr><td>lid</td> <td>@factuur.lid.getFirstName()</td></tr>
+        <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td></tr>
+        <tr><td>betaald</td>
+                              <td>@if(factuur.isBetaald()){
+                                Ja
+                              } else {
+                                Nee
+                              }</td></tr>
+        @* @if(factuur.isBetaald()) {
+            <tr><td>betaling</td>
+            @showAfschrift(factuur.betaling)
+            </tr>
+        } *@
+        </table>
     }
-    </table>
     <h2>Mogelijke betalingen:</h2>
     <table>
       @for( afschrift <- factuur.possiblePayments() ) {
@@ -35,18 +37,23 @@
             <td>
               @if(factuur.betaling != null && afschrift.id == factuur.betaling.id) {
                 @helper.form(action = routes.Facturen.wisBetaling(factuur.id)) {
-                    <input type="submit" value="Wis">
+                    <input type="submit" value="Wis" class="btn danger">
                 }
               } else {
                 @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
-                    <input type="submit" value="Kies">
+                    <input type="submit" value="Kies" class="btn success">
                 }
               }
             </td>
             @showAfschrift(afschrift)
+            <td>
+              @for(factuur <- afschrift.betaaldeFacturen) {
+                @factuur            <br>
+              }
+             </td>
         </tr>
       }
     </table>
 
-    <a href="@routes.Facturen.lijst()">Alle facturen</a>
+    <a href="@routes.Facturen.lijst()" class="btn primary">Lijst facturen</a>
 }

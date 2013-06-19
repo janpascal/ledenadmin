@@ -18,27 +18,19 @@ create table afschrift (
 create table bankrekening (
   id                        bigint not null,
   lid_id                    bigint,
-  rekeningnummer            varchar(255),
+  nummer                    varchar(255),
   constraint pk_bankrekening primary key (id))
 ;
 
 create table factuur (
-  id                        bigint not null,
-  bedrag                    decimal(38),
-  datum                     timestamp,
-  lid_id                    bigint,
-  betaling_id               bigint,
-  constraint pk_factuur primary key (id))
-;
-
-create table factuur_contributie (
+  _type                     integer(31) not null,
   id                        bigint not null,
   bedrag                    decimal(38),
   datum                     timestamp,
   lid_id                    bigint,
   betaling_id               bigint,
   jaar                      integer,
-  constraint pk_factuur_contributie primary key (id))
+  constraint pk_factuur primary key (id))
 ;
 
 create table lid (
@@ -63,8 +55,6 @@ create sequence bankrekening_seq;
 
 create sequence factuur_seq;
 
-create sequence factuur_contributie_seq;
-
 create sequence lid_seq;
 
 create sequence persoon_seq;
@@ -75,12 +65,8 @@ alter table factuur add constraint fk_factuur_lid_2 foreign key (lid_id) referen
 create index ix_factuur_lid_2 on factuur (lid_id);
 alter table factuur add constraint fk_factuur_betaling_3 foreign key (betaling_id) references afschrift (id) on delete restrict on update restrict;
 create index ix_factuur_betaling_3 on factuur (betaling_id);
-alter table factuur_contributie add constraint fk_factuur_contributie_lid_4 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
-create index ix_factuur_contributie_lid_4 on factuur_contributie (lid_id);
-alter table factuur_contributie add constraint fk_factuur_contributie_betalin_5 foreign key (betaling_id) references afschrift (id) on delete restrict on update restrict;
-create index ix_factuur_contributie_betalin_5 on factuur_contributie (betaling_id);
-alter table persoon add constraint fk_persoon_lid_6 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
-create index ix_persoon_lid_6 on persoon (lid_id);
+alter table persoon add constraint fk_persoon_lid_4 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
+create index ix_persoon_lid_4 on persoon (lid_id);
 
 
 
@@ -94,8 +80,6 @@ drop table if exists bankrekening;
 
 drop table if exists factuur;
 
-drop table if exists factuur_contributie;
-
 drop table if exists lid;
 
 drop table if exists persoon;
@@ -107,8 +91,6 @@ drop sequence if exists afschrift_seq;
 drop sequence if exists bankrekening_seq;
 
 drop sequence if exists factuur_seq;
-
-drop sequence if exists factuur_contributie_seq;
 
 drop sequence if exists lid_seq;
 

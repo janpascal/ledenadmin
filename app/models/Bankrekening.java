@@ -22,11 +22,11 @@ public class Bankrekening extends Model {
     public Lid lid;
    
     @Constraints.Required
-    public String rekeningnummer;
+    public String nummer;
 
     public Bankrekening(Lid lid, String nummer) {
         this.lid = lid;
-        this.rekeningnummer = nummer;
+        this.nummer = nummer;
     }
 
     public static void create(Bankrekening bankrekening) {

@@ -13,6 +13,7 @@ import controllers.Afschriften;
 
 import play.Application;
 import play.GlobalSettings;
+import play.Logger;
 
 public class Global extends GlobalSettings {
     
@@ -27,18 +28,18 @@ public class Global extends GlobalSettings {
             if(Ebean.find(Lid.class).findRowCount() == 0) {
                 System.out.println("Seeding members");
                 try {
-                    Leden.perform_csvimport(new File("/home/janpascal/huis/bestuur/email-ledenlijst2.csv"));
+                    Leden.perform_csvimport(new File("data/leden.csv"));
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                
                 System.out.println("Seeding bankafschriften");
                 try {
-                    Afschriften.perform_csvimport(new File("/home/janpascal/heerlijkrecht/financien vereniging/ING-mutaties-download-2321903_16-02-2012_14-06-2013.csv"));
+                    Afschriften.perform_csvimport(new File("data/afschriften.csv"));
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                
                 System.out.println("Seeding contributiefacturen");
                 int aantalFacturen = 0;
                 for(int jaar=2009; jaar<=2013; jaar++) {
@@ -49,14 +50,14 @@ public class Global extends GlobalSettings {
                     }
                 }
                 System.out.println("Generated "+aantalFacturen+" facturen");
-        
-                /*
-                Afschrift afschrift = new Afschrift(new Date(), (long)2000, Afschrift.AfBij.BIJ, "551242663", "Contributie 2011");
-                afschrift.save();
-                Factuur factuur = new FactuurContributie(Lid.find.byId((long) 5), (long) 2000, 2011);
-                factuur.betaling = afschrift;
-                factuur.save();
-               */ 
+
+                Logger.info("Seeding payments");
+                try {
+                    Afschriften.perform_betaling_csvimport(new File("data/betalingen.csv"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+       /* 
                 System.out.println("Creating fake bank accounts");
                 int count=1;
                 for(Lid lid: Lid.find.all()) {
@@ -74,21 +75,6 @@ public class Global extends GlobalSettings {
                 if (aad!=null) {
                     aad.addRekening("8061902");
                     aad.update(aad.id);
-                }
-
-                /*
-                System.out.println(jp.getFirstName());
-                List<FactuurContributie> facturen = 
-                        FactuurContributie.find
-                          .where()
-                            .eq("jaar",2011)
-                            .eq("lid", jp)
-                          .findList();
-                for(FactuurContributie f: facturen) {
-                    System.out.println(f.jaar);
-                    if(f.betaling!=null) {
-                        System.out.println(f.betaling.mededelingen);
-                    }
                 }
                 */
                 

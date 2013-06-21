@@ -21,7 +21,8 @@ public class Bankrekening extends Model {
     @ManyToOne
     public Lid lid;
    
-    @Constraints.Required
+//    @Constraints.Required
+//    @Constraints.MinLength(3)
     public String nummer;
 
     public Bankrekening(Lid lid, String nummer) {

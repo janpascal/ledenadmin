@@ -40,8 +40,10 @@
                     <input type="submit" value="Wis" class="btn danger">
                 }
               } else {
-                @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
-                    <input type="submit" value="Kies" class="btn success">
+                @if(!afschrift.isVerantwoord()) {
+                  @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
+                      <input type="submit" value="Kies" class="btn success">
+                  }
                 }
               }
             </td>

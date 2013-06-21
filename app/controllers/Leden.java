@@ -45,9 +45,31 @@ public class Leden extends Controller {
         if(myForm.hasErrors()) {
             return badRequest(editlid.render(id,myForm));
         }
+        Logger.info("Form values: " + myForm.toString());
+        // Workaround for bug in Ebean: if all 'personen' or
+        // 'bankrekeningen' are removed, they are not
+        // removed from the database
+        Lid oldLid = Lid.find.byId(id);
+        for(Persoon p: oldLid.personen) {
+          p.delete();
+        }
+        for(Bankrekening b: oldLid.bankrekeningen) {
+          b.delete();
+        }
         myForm.get().update(id);
         Lid lid = myForm.get();
-        System.out.println("Updating"+lid.toString());
+        Logger.info("Updating"+lid.toString());
+        Logger.info("   Personen: ");
+        for(Persoon p: lid.personen) {
+          Logger.info("        "+p.name);
+        }
+        Logger.info("   Number of bank accounts: "+lid.bankrekeningen.size());
+        lid = Lid.find.byId(id);
+        Logger.info("   Number of bank accounts in database: "+lid.bankrekeningen.size());
+        Logger.info("   Personen: ");
+        for(Persoon p: lid.personen) {
+          Logger.info("        "+p.name);
+        }
         // flash()
         return redirect(routes.Leden.lijst());
     }
@@ -108,11 +130,17 @@ public class Leden extends Controller {
             String name2=null;
             String address=null;
             String sindsString = null;
+            String totString = null;
+            String email = null;
+            String bankrekening = null;
             if (nextLine.length>=1) idString = nextLine[0];
             if (nextLine.length>=2) name1 = nextLine[1];
             if (nextLine.length>=3) name2 = nextLine[2];
             if (nextLine.length>=4) address = nextLine[3];
             if (nextLine.length>=5) sindsString = nextLine[4];
+            if (nextLine.length>=6) totString = nextLine[5];
+            if (nextLine.length>=7) email = nextLine[6];
+            if (nextLine.length>=8) bankrekening = nextLine[7];
             Long id;
             try {
               id = Long.parseLong(idString);
@@ -135,7 +163,32 @@ public class Leden extends Controller {
                 }
               }
             }
-            Lid lid = new Lid(id, name1, name2, address, lidSinds);    
+            Date lidTot;
+            if (totString.isEmpty()) {
+              lidTot = null;
+            } else {
+              try {
+                lidTot = dateFormatter.parse(totString);
+              } catch (Exception e) {
+                try {
+                    lidTot = dateFormatter2.parse(totString);
+                } catch (Exception e2) {
+                    System.out.println("Error parsing date string "+totString);
+                    e2.printStackTrace();
+                    lidTot = null;
+                }
+              }
+            }
+            Lid lid = new Lid(id, name1, name2, address, lidSinds);
+            if (email != null) lid.personen.get(0).email = email;
+            if (lidTot != null) lid.lidTot = lidTot;          
+            if (bankrekening != null) {
+              String[] nummers = bankrekening.split(",");
+              for(String n: nummers) {
+                lid.addRekening(n.trim());
+              }
+            }
+
             //Lid lid = new Lid(name1, name2, address, lidSinds);    
             Lid.create(lid);
         }

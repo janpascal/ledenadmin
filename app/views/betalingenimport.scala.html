@@ -1,0 +1,13 @@
+@main("Import CSV betalingen") {
+    <h1>Importeer CSV betalingen</h1>
+
+    @helper.form(action = routes.Afschriften.uploadBetalingen, 'enctype -> "multipart/form-data") {
+        
+        <input type="file" name="bestand">
+        
+        <p>
+            <input type="submit">
+        </p>
+        
+    }
+}

@@ -26,6 +26,7 @@ public class Factuur extends Model {
     public BigDecimal bedrag;
     
     @Constraints.Required
+    @Formats.DateTime(pattern="dd/MM/yyyy")
     public Date datum;
     
     @Constraints.Required
@@ -40,7 +41,36 @@ public class Factuur extends Model {
         this.lid = lid;
         this.bedrag = bedrag;
     }
-    
+   
+    public static Page<Factuur> page(int page, int pageSize, String sortBy, String order, String filter, int jaarFilter, String betaaldFilter) {
+      /*
+        Date jan1 = new GregorianCalendar(jaarFilter,0,1,0,0).getTime();
+        if(jaarFilter==0) jaarFilter=Integer.MAX_VALUE;
+        Date dec31 = new GregorianCalendar(jaarFilter+1,0,1,0,0).getTime();
+        */
+        ExpressionList<Factuur> e = 
+            find.where()
+                .ilike("lid.personen.name", "%" + filter + "%");
+        if(jaarFilter>=0) {
+            e = e.eq("jaar", jaarFilter);
+        }
+        if("ja".equals(betaaldFilter)) {
+            e = e.isNotNull("betaling");
+        } else if("nee".equals(betaaldFilter)) {
+            e = e.isNull("betaling");
+        }
+
+        return e 
+                .order(sortBy + " " + order)
+                .fetch("lid.personen", new FetchConfig().query())
+                //.orderBy("lid.personen.name"+ " " + order)
+                .findPagingList(pageSize)
+                .getPage(page);
+    }
+                //.fetch("lid.personen")
+                //.orderBy(sortBy + " " + order)
+                //.orderBy("lid.personen.name" + " " + order)
+ 
     public boolean isBetaald() {
         return betaling != null;
     }
@@ -54,6 +84,7 @@ public class Factuur extends Model {
         Junction<Afschrift> junction = 
                 Afschrift.find
                   .where()
+                    .eq("afbij", Afschrift.AfBij.BIJ)
                     .disjunction();
         for(Bankrekening rek: lid.bankrekeningen) {
           junction.add(Expr.eq("tegenrekening", rek.nummer));

@@ -1,28 +1,111 @@
-@(facturen: List[Factuur])
+@(currentPage: com.avaje.ebean.Page[Factuur], currentSortBy: String,
+currentOrder: String, currentFilter: String, currentJaarFilter: String,
+currentBetaaldFilter: String)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.Facturen.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter)
+}
+
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    @if(key==null) {
+        <th class="header">
+            @title
+        </th>
+    } else {
+        <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+            <a href="@link(0, key)">@title</a>
+        </th>
+    }
+}
 
 @main("Lijst facturen") {
-    <h1>Facturen</h1>
-    Aantal facturen in database: @facturen.size()
-    <table> 
-    <tr>
-    <th>jaar</th>
-    <th>datum</th>
-    <th>betaald</th>
-    <th>lid</th>
-    <th>bedrag</th>
-    <th>mogelijke betalingen</th>
-    </tr>
-	@for(factuur <- facturen) {
-          <tr>
-			  <td>@factuur</td>
-			  <td>@factuur.datum.format("dd/MM/yyyy")</td>
-			  <td><a href="@routes.Facturen.toon(factuur.id)">@if(factuur.isBetaald()){
+    <h1 id="homeTitle">@Messages("facturen.lijst.title", currentPage.getTotalRowCount)</h1>
+
+    @if(flash.containsKey("success")) {
+        <div class="alert-message warning">
+            <strong>Done!</strong> @flash.get("success")
+        </div>
+    } 
+
+    <div id="actions">
+        
+        <form action="@link(0, "lid.name")" method="GET" id="filterform">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter op lid...">
+            <input type="search" id="searchbox" name="fjaar" value="@currentJaarFilter" placeholder="Filter op jaar...">
+            <select name="fbetaald">
+            <option value="">Filter op betaald...</option>
+            <option value="ja" @if(currentBetaaldFilter=="ja"){ selected="yes" }>betaald</option>
+            <option value="nee" @if(currentBetaaldFilter=="nee"){ selected="yes" }>niet betaald</option>
+            </select>
+            <input type="submit" id="searchsubmit" value="Filter" class="btn primary">
+        </form>
+        
+    </div>
+
+    @if(currentPage.getTotalRowCount == 0) {
+        
+        <div class="well">
+            <em>Geen facturen met dit filter...</em>
+        </div>
+        
+    } else {
+       
+        <table class="computers zebra-striped">
+            <thead>
+                <tr>
+                    @header("datum", "Datum")
+                    @header(null, "Factuur")
+                    @* @header("lid.personen.name", "Lid") *@
+                    @header(null, "Lid")
+                    @header(null, "Betaald")
+                    @header("bedrag", "Bedrag")
+                    @header(null, "Mogelijke betalingen")
+                </tr>
+            </thead>
+            <tbody>
+
+                @for(factuur<- currentPage.getList) {
+                    <tr>
+                        <td>
+                            @if(factuur.datum == null) {
+                                <em>-</em>
+                            } else {
+                                @factuur.datum.format("dd/MM/yyyy")
+                            }
+                        </td>
+                        <td><a href="@routes.Facturen.toon(factuur.id)">@factuur</a></td>
+                        <td><a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.lid.getFirstName()</a></td>
+			<td><a href="@routes.Facturen.toon(factuur.id)">@if(factuur.isBetaald()){
                             Ja
                           } else {
                             Nee
                           }</a></td>
-			  <td>@factuur.lid.getFirstName()</td>
-			  <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
+			<td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
                           <td>
                           @for(afschrift <- factuur.possiblePayments() ) {
                             @if(factuur.betaling==afschrift) {
@@ -32,8 +115,37 @@
                             }
                           }
                           </td>
-	      </tr>
-	} 
-    </table>
-    
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <div id="pagination" class="pagination">
+            <ul>
+                @if(currentPage.hasPrev) {
+                    <li class="prev">
+                        <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+                    </li>
+                } else {
+                    <li class="prev disabled">
+                        <a>&larr; Previous</a>
+                    </li>
+                }
+                <li class="current">
+                    <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+                </li>
+                @if(currentPage.hasNext) {
+                    <li class="next">
+                        <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+                    </li>
+                } else {
+                    <li class="next disabled">
+                        <a>Next &rarr;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    }
+
 }

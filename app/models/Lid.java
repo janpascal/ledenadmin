@@ -9,6 +9,7 @@ import play.data.format.*;
 import play.data.validation.*;
 
 import com.avaje.ebean.*;
+import com.avaje.ebean.annotation.PrivateOwned;
 
 @Entity
 public class Lid extends Model {
@@ -18,18 +19,21 @@ public class Lid extends Model {
     @Id
     public Long id;
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid", orphanRemoval = true)
+    @PrivateOwned
+    @javax.persistence.OrderBy("id ASC")
     public List<Persoon> personen;
     
-    @Constraints.Required
-    @Formats.DateTime(pattern="dd/MM/yyyy")
+    //@Formats.DateTime(pattern="dd/MM/yyyy")
     public Date lidSinds;
     
     public Date lidTot;
    
     public String address;
    
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid", orphanRemoval = true)
+    @PrivateOwned
+    @javax.persistence.OrderBy("id ASC")
     public List<Bankrekening> bankrekeningen;
 
     public Lid(String name, Date lidSinds) {

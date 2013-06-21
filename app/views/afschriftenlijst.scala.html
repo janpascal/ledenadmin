@@ -1,7 +1,162 @@
-@(afschriften: List[Afschrift])
+@(currentPage: com.avaje.ebean.Page[Afschrift], currentSortBy: String,
+currentOrder: String, currentFilter: String, currentJaarFilter: String,
+currentVerantwoordFilter: String)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.Afschriften.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter)
+}
+
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    @if(key==null) {
+        <th class="header">
+            @title
+        </th>
+    } else {
+        <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+            <a href="@link(0, key)">@title</a>
+        </th>
+    }
+}
 
 @main("Lijst afschriften") {
-    <h1>Bankafschriften</h1>
+    <h1 id="homeTitle">@Messages("Bankafschriften", currentPage.getTotalRowCount)</h1>
+    @if(flash.containsKey("error")) {
+        <div class="alert-message error">
+            <p>
+                <strong>Oops!</strong> @flash.get("error")
+            </p>
+        </div>
+    } 
+    @if(flash.containsKey("success")) {
+        <div class="alert-message warning">
+            <strong>Done!</strong> @flash.get("success")
+        </div>
+    }
+
+    <div id="actions">
+        
+        <form action="@link(0, "lid.name")" method="GET" id="filterform">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter op naam...">
+            <input type="search" id="searchbox" name="fjaar" value="@currentJaarFilter" placeholder="Filter op jaar...">
+            <select name="fverantw">
+            <option value="">Filter op verantwoord...</option>
+            <option value="ja" @if(currentVerantwoordFilter=="ja"){ selected="yes" }>verantwoord</option>
+            <option value="nee" @if(currentVerantwoordFilter=="nee"){ selected="yes" }>niet verantwoord</option>
+            </select>
+            <input type="submit" id="searchsubmit" value="Filter" class="btn primary">
+        </form>
+        
+    </div>
+
+    @if(currentPage.getTotalRowCount == 0) {
+        
+        <div class="well">
+            <em>Geen afschriften met dit filter...</em>
+        </div>
+        
+    } else {
+       
+        <table class="zebra-striped">
+            <thead>
+                <tr>
+                    @header("datum", "Datum")
+                    @header(null, "Naam")
+                    @header("bedrag", "Bedrag")
+                    @header(null, "Af/Bij")
+                    @header(null, "Tegenrekening")
+                    @header(null, "Mededelingen")
+                    @header(null, "Verantwoord")
+                    @header(null, "Betaling voor")
+                </tr>
+            </thead>
+            <tbody>
+
+                @for(afschrift<- currentPage.getList) {
+                    @if( (currentVerantwoordFilter=="")
+                      || (afschrift.isVerantwoord() && currentVerantwoordFilter=="ja") 
+                      || (!afschrift.isVerantwoord() &&
+                      currentVerantwoordFilter=="nee") ) {
+                    <tr>
+                        <td><a href="@routes.Afschriften.toon(afschrift.id)">
+                            @if(afschrift.datum == null) {
+                                <em>-</em>
+                            } else {
+                                @afschrift.datum.format("dd/MM/yyyy")
+                            }
+                        </a></td>
+                        <td>@afschrift.naam</td>
+			<td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td>
+			  <td>@afschrift.afbij</td>
+                        <td>@afschrift.tegenrekening</td>
+			  <td>@afschrift.mededelingen</td>
+			  <td>@if(afschrift.isVerantwoord()) {
+                            ja
+                            } else {
+                              nee }</td>
+			  <td>
+                              @for(factuur <- afschrift.betaaldeFacturen) {
+                                  @factuur
+                              }
+                          </td>
+                    </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+        <div id="pagination" class="pagination">
+            <ul>
+                @if(currentPage.hasPrev) {
+                    <li class="prev">
+                        <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+                    </li>
+                } else {
+                    <li class="prev disabled">
+                        <a>&larr; Previous</a>
+                    </li>
+                }
+                <li class="current">
+                    <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+                </li>
+                @if(currentPage.hasNext) {
+                    <li class="next">
+                        <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+                    </li>
+                } else {
+                    <li class="next disabled">
+                        <a>Next &rarr;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    }
+@*
     <table> 
     <tr>
     <th>datum</th>
@@ -10,6 +165,7 @@
     <th>af/bij</th>
     <th>tegenrekening</th>
     <th>mededelingen</th>
+    <th>verantwoord</th>
     <th>betaling voor</th>
     </tr>
 	@for(afschrift <- afschriften) {
@@ -20,15 +176,19 @@
 			  <td>@afschrift.afbij</td>
 			  <td>@afschrift.tegenrekening</td>
 			  <td>@afschrift.mededelingen</td>
+			  <td>@if(afschrift.verantwoord()) {
+                            ja
+                            } else {
+                              nee }</td>
 			  <td>
-                              @for(factuur <- afschrift.betaaldeFacturen) {
-                                  @factuur
+                              @for(afschrift <- afschrift.verantwoordeafschriften) {
+                                  @afschrift
                               }
                           </td>
 	      </tr>
 	} 
     </table>
-    
+  *@  
     <a class="btn success" id="import"
     href="@routes.Afschriften.csvimport()">Importeer een CSV
     bankafschriftendownloadbestand</a>

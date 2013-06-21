@@ -5,25 +5,27 @@
     <table> 
     <tr>
     <th>lidnr</th>
-    <th>naam1</th>
-    <th>naam2</th>
+    <th>namen</th>
     <th>adres</th>
     <th>lid sinds</th>
+    <th>lid tot</th>
     <th>bankrekeningen</th>
     </tr>
 	@for(lid <- leden) {
           <tr>
 			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.id</a></td>
-			  <td>@if(lid.personen.size()>0){ 
-			      @lid.personen.get(0).name
-			      }</td>
-			  <td>@if(lid.personen.size()>1){ 
-			      @lid.personen.get(1).name
-			      }</td>
+			  <td>
+                          @for((p,i) <- lid.personen.zipWithIndex) {
+			      @p.name 
+                              @if(i != lid.personen.size-1) { &mdash; }
+                          }</td>
 			  <td>@lid.address</td>
 			  <td>@if(lid.lidSinds!=null) {
 			  		@lid.lidSinds.format("dd/MM/yyyy")
-			  	  }</td>
+			  	  } else { &mdash; } </td>
+			  <td>@if(lid.lidTot!=null) {
+			  		@lid.lidTot.format("dd/MM/yyyy")
+			  	  } else { &mdash; } </td>
                           <td>@for( rek <- lid.bankrekeningen ) {
                             @rek.nummer
                           }</td>

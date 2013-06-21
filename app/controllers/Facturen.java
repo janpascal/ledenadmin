@@ -15,16 +15,29 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import models.*;
 import play.*;
+import com.avaje.ebean.*;
 import play.libs.F.Promise;
 import play.mvc.*;
 
 import views.html.*;
 
 public class Facturen extends Controller {
-  
-    public static Result lijst() {
-        List<Factuur> facturen = Factuur.find.all();
-        return ok(facturenlijst.render(facturen));
+    public static Result lijst(int page, String sortBy, String order, String
+    filter, String jaarFilter, String betaaldFilter) {
+        int jaar;
+        try {
+            jaar = Integer.parseInt(jaarFilter);
+        } catch (NumberFormatException e) {
+            jaar = -1;
+        }
+        Page<Factuur> currentPage = Factuur.page(page, 15, sortBy, order, filter, jaar, betaaldFilter);
+        //Logger.info("sortBy: " + sortBy);
+        return ok(
+            facturenlijst.render(
+                currentPage,
+                sortBy, order, filter, jaarFilter, betaaldFilter
+            )
+        );
     }
 
     public static Result toon(Long id) {

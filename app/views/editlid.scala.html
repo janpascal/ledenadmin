@@ -42,6 +42,8 @@
 
         @helper.inputDate(myForm("lidSinds"), '_label -> "Lid sinds")
 
+        @helper.inputDate(myForm("lidTot"), '_label -> "Lid tot")
+
         @helper.repeat(myForm("bankrekeningen"), min = 1) { bankrekening =>
                 @bankrekeningField(bankrekening("nummer"))
         }
@@ -67,6 +69,7 @@
    <script type="text/javascript" charset="utf-8">
         $(function() {
           $( "#lidSinds" ).datepicker({ dateFormat: "dd/mm/yy", changeYear: true });
+          $( "#lidTot" ).datepicker({ dateFormat: "dd/mm/yy", changeYear: true });
         });
 
         $(document).on('click','.removePersoon', function(e) {

@@ -24,9 +24,10 @@ public class Lid extends Model {
     @javax.persistence.OrderBy("id ASC")
     public List<Persoon> personen;
     
-    //@Formats.DateTime(pattern="dd/MM/yyyy")
+    @Formats.DateTime(pattern="dd/MM/yyyy")
     public Date lidSinds;
     
+    @Formats.DateTime(pattern="dd/MM/yyyy")
     public Date lidTot;
    
     public String address;

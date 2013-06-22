@@ -14,6 +14,7 @@ import controllers.Afschriften;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
+import play.Play;
 
 public class Global extends GlobalSettings {
     
@@ -26,7 +27,7 @@ public class Global extends GlobalSettings {
         
         public static void insert(Application app) {
             if(Ebean.find(Lid.class).findRowCount() == 0) {
-                if(Play.mode.equals(Play.Mode.DEV)) {
+                if(Play.isDev()) {
                     System.out.println("Seeding members");
                     try {
                         Leden.perform_csvimport(new File("data/leden.csv"));

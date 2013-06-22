@@ -15,6 +15,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import models.*;
 import play.*;
+import play.data.DynamicForm;
 import com.avaje.ebean.*;
 import play.libs.F.Promise;
 import play.mvc.*;
@@ -22,6 +23,11 @@ import play.mvc.*;
 import views.html.*;
 
 public class Facturen extends Controller {
+
+    public static Result list() {
+      return lijst(0, "datum", "asc", "", "", ""); 
+    }
+
     public static Result lijst(int page, String sortBy, String order, String
     filter, String jaarFilter, String betaaldFilter) {
         int jaar;
@@ -77,5 +83,27 @@ public class Facturen extends Controller {
          Logger.info(postAction[0]);
       }
       return TODO;
+    }
+
+    public static Result newInvoicesForm() {
+      return ok(new_invoices_form.render(new DynamicForm()));
+    }
+
+    public static Result createNewInvoices() throws ParseException {
+      DynamicForm form = new DynamicForm().bindFromRequest();
+      String yearString = form.get("year");
+      String amountString = form.get("amount");
+      Logger.info("Generating invoices for year "+yearString+" ("+amountString+")");
+      int year = Integer.parseInt(yearString);
+      DecimalFormat currencyFormat = new DecimalFormat("0.00");
+      currencyFormat.setParseBigDecimal(true);
+      BigDecimal amount = (BigDecimal) currencyFormat.parse(amountString);
+      Logger.info("Generating invoices for year "+year+" ("+amount+")");
+      List<Factuur> facturen = FactuurContributie.generateInvoices(year, amount);
+      for(Factuur f: facturen) {
+        f.save();
+      }
+      flash("success", facturen.size()+" facturen gegenereerd");
+      return redirect(routes.Facturen.list()); 
     }
 }

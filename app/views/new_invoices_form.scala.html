@@ -1,0 +1,21 @@
+@(myForm: DynamicForm)
+
+@import helper._
+
+@main("Genereer facturen voor jaarlijks contributie") {
+    <h1>Nieuwe contributiefacturen</h1>
+    @helper.form(action = routes.Facturen.createNewInvoices) {
+        <fieldset class="fieldset">
+            <legend>Contributie</legend>
+
+            @inputText(myForm("year"), '_label -> "Jaar");
+            @inputText(myForm("amount"), '_label -> "Bedrag");
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Genereren" class="btn primary"> of 
+            <a href="@routes.Facturen.lijst()" class="btn">Annuleren</a> 
+        </div>
+
+    }
+}

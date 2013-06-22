@@ -27,6 +27,24 @@ public class FactuurContributie extends Factuur {
         this.jaar = jaar;
     }
 
+    // genereer contributiefacturen voor een bepaald jaar. Alleen voor de 
+    // leden die in dat jaar lid waren
+    public static List<Factuur> generateInvoices(int year, BigDecimal amount) {
+      Date jan1 = new GregorianCalendar(year,0,1,0,0).getTime();
+      Date dec31 = new GregorianCalendar(year+1,0,1,0,0).getTime();
+      // Find eligible members
+      List<Lid> leden = Lid.find.where()
+         .or(Expr.isNull("lidSinds"), Expr.lt("lidSinds", dec31))
+         .or(Expr.isNull("lidTot"), Expr.gt("lidTot", jan1))
+         .findList();
+      List<Factuur> result = new ArrayList<Factuur>(leden.size());
+      Date now = new Date();
+      for(Lid lid: leden) {
+        result.add(new FactuurContributie(now, lid, amount, year));
+      }
+      return result;
+    }
+
     public static Finder<Long,FactuurContributie> find = new Finder<Long, FactuurContributie>(
             Long.class, FactuurContributie.class
     );

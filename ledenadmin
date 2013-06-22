@@ -1,0 +1,6 @@
+#!/bin/bash
+
+START=/usr/local/lib/ledenadmin/start
+OPTS="-Dconfig.file=/etc/ledenadmin/prod.conf"
+
+$START "$OPTS"

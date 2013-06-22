@@ -5,14 +5,15 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "ledenadmin"
-  val appVersion      = "1.0-SNAPSHOT"
+  val appVersion      = "0.5"
 
   val appDependencies = Seq(
     // Add your project dependencies here,
     javaCore,
     javaJdbc,
     javaEbean,
-    "net.sf.opencsv" % "opencsv" % "2.3"
+    "net.sf.opencsv" % "opencsv" % "2.3",
+    "mysql" % "mysql-connector-java" % "5.1.18"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

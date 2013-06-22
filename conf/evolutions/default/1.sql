@@ -4,8 +4,8 @@
 # --- !Ups
 
 create table afschrift (
-  id                        bigint not null,
-  datum                     timestamp,
+  id                        bigint auto_increment not null,
+  datum                     datetime,
   bedrag                    decimal(38),
   afbij                     integer,
   tegenrekening             varchar(255),
@@ -16,7 +16,7 @@ create table afschrift (
 ;
 
 create table bankrekening (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   lid_id                    bigint,
   nummer                    varchar(255),
   constraint pk_bankrekening primary key (id))
@@ -24,9 +24,9 @@ create table bankrekening (
 
 create table factuur (
   _type                     integer(31) not null,
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   bedrag                    decimal(38),
-  datum                     timestamp,
+  datum                     datetime,
   lid_id                    bigint,
   betaling_id               bigint,
   jaar                      integer,
@@ -34,30 +34,20 @@ create table factuur (
 ;
 
 create table lid (
-  id                        bigint not null,
-  lid_sinds                 timestamp,
-  lid_tot                   timestamp,
+  id                        bigint auto_increment not null,
+  lid_sinds                 datetime,
+  lid_tot                   datetime,
   address                   varchar(255),
   constraint pk_lid primary key (id))
 ;
 
 create table persoon (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   lid_id                    bigint,
   name                      varchar(255),
   email                     varchar(255),
   constraint pk_persoon primary key (id))
 ;
-
-create sequence afschrift_seq;
-
-create sequence bankrekening_seq;
-
-create sequence factuur_seq;
-
-create sequence lid_seq;
-
-create sequence persoon_seq;
 
 alter table bankrekening add constraint fk_bankrekening_lid_1 foreign key (lid_id) references lid (id) on delete restrict on update restrict;
 create index ix_bankrekening_lid_1 on bankrekening (lid_id);
@@ -72,27 +62,17 @@ create index ix_persoon_lid_4 on persoon (lid_id);
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists afschrift;
+drop table afschrift;
 
-drop table if exists bankrekening;
+drop table bankrekening;
 
-drop table if exists factuur;
+drop table factuur;
 
-drop table if exists lid;
+drop table lid;
 
-drop table if exists persoon;
+drop table persoon;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists afschrift_seq;
-
-drop sequence if exists bankrekening_seq;
-
-drop sequence if exists factuur_seq;
-
-drop sequence if exists lid_seq;
-
-drop sequence if exists persoon_seq;
+SET FOREIGN_KEY_CHECKS=1;
 

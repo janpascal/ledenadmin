@@ -16,3 +16,4 @@ tmp
 /.settings
 /.target
 .*.swp
+conf/db.conf

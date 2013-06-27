@@ -111,6 +111,13 @@ public class Lid extends Model {
         return factuur.betaling.datum;
     }
 
+    public boolean lidInJaar(int year) {
+      Date jan1 = new GregorianCalendar(year,0,1,0,0).getTime();
+      Date dec31 = new GregorianCalendar(year+1,0,1,0,0).getTime();
+      return ( (lidSinds==null) || (lidSinds.before(dec31)) )
+          && ( (lidTot==null) || (lidTot.after(jan1)));
+    }
+
     public Bankrekening addRekening(String nummer) {
       Bankrekening rek = new Bankrekening(this, nummer);
       bankrekeningen.add(rek);

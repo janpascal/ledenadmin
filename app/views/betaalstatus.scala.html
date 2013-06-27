@@ -17,11 +17,14 @@
 			  <td>@lid.getFirstName()</td>
 			  <td>@lid.address</td>
    		      @for(jaar <- jaren) {
-			   	<td>@if(lid.contributieBetaald(jaar)) {
-			   	      @lid.contributieBetaaldOp(jaar).format("dd/MM/yyyy")
-			   	    } else {
-			   	      -
-			   	    } 
+			   	<td>
+                                   @if(lid.lidInJaar(jaar)) {
+                                       @if(lid.contributieBetaald(jaar)) {
+                                          @lid.contributieBetaaldOp(jaar).format("dd/MM/yyyy")
+                                        } else {
+                                          &mdash; 
+                                        } 
+                                   } 
 			   	</td>
 			  }
 	      </tr>

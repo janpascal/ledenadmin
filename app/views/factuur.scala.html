@@ -1,4 +1,4 @@
-@(id: Long, factuur: FactuurContributie)
+@(id: Long, factuur: Factuur)
 
 @showAfschrift(afschrift: Afschrift) = {
     <td>@afschrift.datum.format("dd/MM/yyyy")</td>
@@ -10,12 +10,22 @@
 }
 
 @main("Factuur") {
-    <h1>Factuur contributie @factuur.jaar</h1>
+    <h1>Factuur @factuur</h1>
+
+    @helper.form(action = routes.Facturen.deleteInvoice(id)) {
+        <input type="submit" value="Verwijder deze factuur" class="btn danger">
+    }
+
     @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
         <table> 
-        <tr><td>jaar</td><td>@factuur.jaar</td></tr>
+        <tr><td>omschrijving</td><td>@factuur</td></tr>
         <tr><td>datum</td><td>@factuur.datum.format("dd/MM/yyyy")</td></tr>
-        <tr><td>lid</td> <td>@factuur.lid.getFirstName()</td></tr>
+        <tr><td>lid</td><td>
+           @if(factuur.lid==null){
+             @factuur.betrokkene()
+           } else {
+             <a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.betrokkene()</a>
+           }</td></tr>
         <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td></tr>
         <tr><td>betaald</td>
                               <td>@if(factuur.isBetaald()){
@@ -23,11 +33,6 @@
                               } else {
                                 Nee
                               }</td></tr>
-        @* @if(factuur.isBetaald()) {
-            <tr><td>betaling</td>
-            @showAfschrift(factuur.betaling)
-            </tr>
-        } *@
         </table>
     }
     <h2>Mogelijke betalingen:</h2>
@@ -42,7 +47,7 @@
               } else {
                 @if(!afschrift.isVerantwoord()) {
                   @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
-                      <input type="submit" value="Kies" class="btn success">
+                      <input type="submit" value="Selecteer" class="btn success">
                   }
                 }
               }
@@ -50,7 +55,7 @@
             @showAfschrift(afschrift)
             <td>
               @for(factuur <- afschrift.betaaldeFacturen) {
-                @factuur            <br>
+                @factuur <br>
               }
              </td>
         </tr>
@@ -58,4 +63,5 @@
     </table>
 
     <a href="@routes.Facturen.lijst()" class="btn primary">Lijst facturen</a>
+
 }

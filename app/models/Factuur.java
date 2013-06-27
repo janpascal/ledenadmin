@@ -41,6 +41,15 @@ public class Factuur extends Model {
         this.lid = lid;
         this.bedrag = bedrag;
     }
+
+    public String betrokkene() {
+      if(lid != null) {
+          return lid.getFirstName();
+      } else {
+        return "";
+      }
+    }
+
    
     public static Page<Factuur> page(int page, int pageSize, String sortBy, String order, String filter, int jaarFilter, String betaaldFilter) {
       /*
@@ -50,7 +59,8 @@ public class Factuur extends Model {
         */
         ExpressionList<Factuur> e = 
             find.where()
-                .ilike("lid.personen.name", "%" + filter + "%");
+                .or(Expr.ilike("lid.personen.name", "%" + filter + "%"),
+                    Expr.ilike("naam", "%"+filter+"%"));
         if(jaarFilter>=0) {
             e = e.eq("jaar", jaarFilter);
         }
@@ -76,7 +86,10 @@ public class Factuur extends Model {
     }
     
     public List<Afschrift> possiblePayments() {
-        if(lid.bankrekeningen.isEmpty()) {
+        if(lid==null || lid.bankrekeningen.isEmpty()) {
+          if (betaling != null) {
+            return Collections.singletonList(betaling);
+          }
           return new ArrayList<Afschrift>();
         }
         // tegenrekening in bekende bankrekeningen lid
@@ -89,10 +102,24 @@ public class Factuur extends Model {
         for(Bankrekening rek: lid.bankrekeningen) {
           junction.add(Expr.eq("tegenrekening", rek.nummer));
         }
-        List<Afschrift> result = junction.findList(); 
+        List<Afschrift> result = junction
+               .orderBy("datum asc")
+               .findList(); 
+        if (betaling != null && !result.contains(betaling)) {
+          result.add(betaling);
+        }
         return result;
     }
 
+    public void markeerBetaling(Afschrift afschrift) {
+      this.betaling = afschrift;
+      afschrift.betaaldeFacturen.add(this);
+    }
+
+    public static void delete(Long id) {
+       find.ref(id).delete();
+    }
+     
     public static Finder<Long,Factuur> find = new Finder<Long, Factuur>(
             Long.class, Factuur.class
     );

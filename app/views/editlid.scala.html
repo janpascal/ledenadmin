@@ -66,6 +66,42 @@
         <a href="@routes.Leden.lijst()" class="btn">Annuleren</a> 
     </div>
 
+   }
+
+   <h2>Facturen</h2>
+
+   <table>
+       <tr>
+           <th>Datum</th>
+           <th>Factuur</th>
+           <th>Betaald</th>
+           <th>Bedrag</th>
+           <th>Mogelijke betalingen</th>
+        </tr>
+      @for(factuur <- myForm.get().facturen()) {
+        <tr>
+            <td>@factuur.datum.format("dd/MM/yyyy")</td>
+            <td><a href="@routes.Facturen.toon(factuur.id)">@factuur.toString()</a></td>
+            <td>@if(factuur.isBetaald()){
+                    Ja
+                  } else {
+                    Nee
+                  }</td>
+            <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
+            <td>
+            @for(afschrift <- factuur.possiblePayments() ) {
+              <span class="betaling
+                @if(factuur.betaling==afschrift) { gekozen }
+                @if(afschrift.isVerantwoord()) { verantwoord }
+                ">
+                @afschrift.datum.format("dd/MM/yyyy")
+              </span>
+            }
+            </td>
+        </tr>
+      }
+    </table>
+
    <script type="text/javascript" charset="utf-8">
         $(function() {
           $( "#lidSinds" ).datepicker({ dateFormat: "dd/mm/yy", changeYear: true });
@@ -120,6 +156,4 @@
         }
 
     </script>
-
-    }
 }

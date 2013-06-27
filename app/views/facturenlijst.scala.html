@@ -24,7 +24,7 @@ currentBetaaldFilter: String)
     }
     
     // Generate the link
-    routes.Facturen.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter)
+    routes.Facturen.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter, currentBetaaldFilter)
 }
 
 
@@ -46,9 +46,11 @@ currentBetaaldFilter: String)
 @main("Lijst facturen") {
     <h1 id="homeTitle">@Messages("facturen.lijst.title", currentPage.getTotalRowCount)</h1>
 
-    @if(flash.containsKey("success")) {
-        <div class="alert-message warning">
-            <strong>Done!</strong> @flash.get("success")
+    @if(flash.containsKey("error")) {
+        <div class="alert-message error">
+            <p>
+                <strong>Oops!</strong> @flash.get("error")
+            </p>
         </div>
     } 
     @if(flash.containsKey("success")) {
@@ -85,7 +87,6 @@ currentBetaaldFilter: String)
                 <tr>
                     @header("datum", "Datum")
                     @header(null, "Factuur")
-                    @* @header("lid.personen.name", "Lid") *@
                     @header(null, "Lid")
                     @header(null, "Betaald")
                     @header("bedrag", "Bedrag")
@@ -113,11 +114,12 @@ currentBetaaldFilter: String)
 			<td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
                           <td>
                           @for(afschrift <- factuur.possiblePayments() ) {
-                            @if(factuur.betaling==afschrift) {
-			      <b>@afschrift.datum.format("dd/MM/yyyy")</b>
-                            } else {
+                            <span class="betaling
+                              @if(factuur.betaling==afschrift) { gekozen }
+                              @if(afschrift.isVerantwoord()) { verantwoord }
+                              ">
 			      @afschrift.datum.format("dd/MM/yyyy")
-                            }
+                            </span>
                           }
                           </td>
                     </tr>

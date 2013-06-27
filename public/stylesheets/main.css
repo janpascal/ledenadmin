@@ -77,3 +77,11 @@ body {
 .persoon_template, .bankrekening_template {
     display: none;
 }
+
+.betaling.gekozen {
+  font-weight: bold;
+}
+
+.betaling.verantwoord {
+  text-decoration: line-through;
+}

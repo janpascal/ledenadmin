@@ -2,12 +2,18 @@
     <h1>Importeer CSV betalingen</h1>
 
     @helper.form(action = routes.Afschriften.uploadBetalingen, 'enctype -> "multipart/form-data") {
-        
-        <input type="file" name="bestand">
-        
-        <p>
-            <input type="submit">
-        </p>
-        
+        <table>
+        <tr>
+          <td>Bestandsnaam</td>
+          <td><input type="file" name="bestand"></td>
+        </tr>
+        <tr>
+        <td>Genereer missend afschrift</td>
+        <td><input type="checkbox" name="createMissingBankStatements"
+        id="create"></td>
+        </tr>
+        <tr>
+        <td></td><td><input type="submit" class="btn primary"></td>
+        </tr>
     }
 }

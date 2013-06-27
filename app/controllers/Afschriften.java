@@ -59,6 +59,22 @@ public class Afschriften extends Controller {
       return ok(afschrift.render(id, a));
     }
 
+    public static Result genereerFactuur(Long afschriftId) {
+      Afschrift afschrift = Afschrift.find.byId(afschriftId);
+
+      Lid lid = null; // TODO probeer ahv naamveld in afschrift te matchen
+
+      Factuur factuur = new FactuurAlgemeen(afschrift.datum, lid, afschrift.bedrag,
+          afschrift.naam, afschrift.mededelingen);
+
+      factuur.markeerBetaling(afschrift);
+
+      factuur.save();
+      afschrift.update();
+
+      return redirect(routes.Facturen.toon(factuur.id));
+    }
+
     public static Result csvimport() {
         return ok(csvafschriftenimport.render());
    }
@@ -175,13 +191,27 @@ public class Afschriften extends Controller {
             flash("error", "Missing file");
             return redirect(routes.Application.index());
         }
+        java.util.Map<java.lang.String,java.lang.String[]> map = body.asFormUrlEncoded();
+        /*
+        String[] items = map.get("createMissingBankStatements");
+        boolean createMissing;
+        if(items == null) {
+           createMissing = false;
+        } else {  
+            for(String s: items) {
+              Logger.info("Item: "+s);
+            }
+        }
+        */
+        boolean createMissing = body.asFormUrlEncoded().get("createMissingBankStatements") != null;
+        Logger.info("Creating missing: "+createMissing);
         FilePart part = body.getFile("bestand");
         if (part != null) {
           String fileName = part.getFilename();
           String contentType = part.getContentType(); 
           File file = part.getFile();
           try {
-            perform_betaling_csvimport(file);
+            perform_betaling_csvimport(file, createMissing);
           } catch (Exception e) {
             e.printStackTrace();
             flash("error", "File not found of andere fout: "+e.getMessage());
@@ -196,7 +226,7 @@ public class Afschriften extends Controller {
       }
 
     @com.avaje.ebean.annotation.Transactional
-    public static void perform_betaling_csvimport(File file) throws FileNotFoundException, ParseException, NumberFormatException, IOException {
+    public static void perform_betaling_csvimport(File file, boolean createMissing) throws FileNotFoundException, ParseException, NumberFormatException, IOException {
         System.out.println("Importing CSV betalingen...");
         CSVReader reader = new CSVReader(new FileReader(file), ';');
         String [] nextLine;
@@ -280,6 +310,17 @@ public class Afschriften extends Controller {
                   Logger.warn("-- Geen afschrift gevonden");
                   for( Afschrift a: afschriften ) {
                       Logger.info("  "+a.toString());
+                  }
+                  if (createMissing) {
+                    Logger.info("Creating missing bank statement");
+                    afschrift = new Afschrift(datum,
+                            lid.getFirstName(), bedrag, Afschrift.AfBij.BIJ, 
+                            "onbekend", mededelingen);
+                    Afschrift.create(afschrift);
+                    factuur.betaling = afschrift;
+                    afschrift.betaaldeFacturen.add(factuur);
+                    factuur.update();
+                    afschrift.update();
                   }
                   continue;
                 }

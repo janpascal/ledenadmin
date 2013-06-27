@@ -56,7 +56,7 @@ public class Global extends GlobalSettings {
 
                     Logger.info("Seeding payments");
                     try {
-                        Afschriften.perform_betaling_csvimport(new File("data/betalingen.csv"));
+                        Afschriften.perform_betaling_csvimport(new File("data/betalingen.csv"), true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

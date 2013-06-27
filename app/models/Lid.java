@@ -116,6 +116,15 @@ public class Lid extends Model {
       bankrekeningen.add(rek);
       return rek;
     }
+
+    public List<Factuur> facturen() {
+        List<Factuur> facturen = 
+                Factuur.find
+                  .where()
+                    .eq("lid", this)
+                  .findList();
+        return facturen;
+    }
     
     public static void create(Lid lid) {
         lid.save();

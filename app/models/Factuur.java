@@ -4,6 +4,7 @@ import java.util.*;
 import java.math.BigDecimal;
 import javax.persistence.*;
 
+import play.Logger;
 import play.db.ebean.*;
 import play.db.ebean.Model.Finder;
 import play.data.format.*;
@@ -21,7 +22,7 @@ public class Factuur extends Model {
     @SequenceGenerator(name="factuur_seq_gen", sequenceName="FACTUUR_SEQ")
     @Id
     public Long id;
-    
+
     @Constraints.Required
     public BigDecimal bedrag;
     
@@ -29,7 +30,6 @@ public class Factuur extends Model {
     @Formats.DateTime(pattern="dd/MM/yyyy")
     public Date datum;
     
-    @Constraints.Required
     @ManyToOne
     public Lid lid;
     
@@ -57,10 +57,85 @@ public class Factuur extends Model {
         if(jaarFilter==0) jaarFilter=Integer.MAX_VALUE;
         Date dec31 = new GregorianCalendar(jaarFilter+1,0,1,0,0).getTime();
         */
+        /*
+        String sql = " select order_id, o.status, c.id, c.name, sum(d.order_qty*d.unit_price) as totalAmount"
+                + " from o_order o" 
+                + " join o_customer c on c.id = o.kcustomer_id "
+                + " join o_order_detail d on d.order_id = o.id " 
+                + " group by order_id, o.status ";
+       
+        RawSql rawSql = 
+        RawSqlBuilder.parse(sql)
+            // map the sql result columns to bean properties
+            .columnMapping("order_id", "order.id")
+            .columnMapping("o.status", "order.status")
+            .columnMapping("c.id", "order.customer.id")
+            .columnMapping("c.name","order.customer.name")
+            // we don't need to map this one due to the sql column alias
+            //.columnMapping("sum(d.order_qty*d.unit_price)", "totalAmount")
+            .create();
+            */
+            /*
+        String sql = "select distinct factuur.id, factuur._type, factuur.bedrag, "
+            + " factuur.datum, factuur.lid_id, factuur.betaling_id, factuur.naam,"
+            + " factuur.omschrijving, factuur.jaar "
+            + " from factuur "
+            + " left join lid on lid.id = factuur.lid_id "
+            + " left join persoon on persoon.lid_id = lid.id";
+        RawSql rawSql = RawSqlBuilder.parse(sql)
+            // map the sql result columns to bean properties
+            .columnMapping("factuur.id", "id")
+            .columnMapping("factuur._type", "_type")
+            .columnMapping("factuur.bedrag", "bedrag")
+            .columnMapping("factuur.datum", "datum")
+            .columnMapping("factuur.lid_id", "lid.id")
+            .columnMapping("factuur.betaling_id", "betaling.id")            
+            .columnMapping("factuur.naam", "naam")
+            .columnMapping("factuur.omschrijving", "omschrijving")
+            .columnMapping("factuur.jaar", "jaar")
+            //.columnMapping("o.status", "order.status")
+            //.columnMapping("c.id", "order.customer.id")
+            //.columnMapping("c.name","order.customer.name")
+            // we don't need to map this one due to the sql column alias
+            //.columnMapping("sum(d.order_qty*d.unit_price)", "totalAmount")
+            .create();
+*/
+/*
+        String sql = "select distinct factuur.id "
+            + " from factuur "
+            + " left join lid on lid.id = factuur.lid_id "
+            + " left join persoon on persoon.lid_id = lid.id";
+        RawSql rawSql = RawSqlBuilder.parse(sql)
+            // map the sql result columns to bean properties
+            .columnMapping("factuur.id", "id")
+            .create();
+        com.avaje.ebean.Query<Factuur> query = Ebean.find(Factuur.class);
+        ExpressionList<Factuur> e = query.setRawSql(rawSql)
+            .select("id")
+            .where()
+            .or(Expr.ilike("persoon.name", "%" + filter + "%"),
+                Expr.ilike("naam", "%"+filter+"%"));
+        if(jaarFilter>=0) {
+            e = e.eq("jaar", jaarFilter);
+        }
+        if("ja".equals(betaaldFilter)) {
+            e = e.isNotNull("betaling");
+        } else if("nee".equals(betaaldFilter)) {
+            e = e.isNull("betaling");
+        }
+*/
+
+        // FIXME: this uses a JOIN instead of a LEFT JOIN
+        // which makes it only find objects for which 
+        // lid.personen.name is set
         ExpressionList<Factuur> e = 
-            find.where()
-                .or(Expr.ilike("lid.personen.name", "%" + filter + "%"),
+            find.where();
+
+        if (filter!=null && !"".equals(filter)) {
+          e = e.or(Expr.ilike("lid.personen.name", "%" + filter + "%"),
                     Expr.ilike("naam", "%"+filter+"%"));
+        }
+
         if(jaarFilter>=0) {
             e = e.eq("jaar", jaarFilter);
         }
@@ -70,12 +145,19 @@ public class Factuur extends Model {
             e = e.isNull("betaling");
         }
 
-        return e 
+        com.avaje.ebean.Query<Factuur> q = e
                 .order(sortBy + " " + order)
-                .fetch("lid.personen", new FetchConfig().query())
+                .fetch("lid.personen", new FetchConfig().query());
                 //.orderBy("lid.personen.name"+ " " + order)
+        Page<Factuur> result = q
                 .findPagingList(pageSize)
                 .getPage(page);
+
+        //Logger.info("Used SQL: "+query.getGeneratedSql());
+        //q.findList();
+        //Logger.info("Used SQL: "+q.getGeneratedSql());
+
+        return result;
     }
                 //.fetch("lid.personen")
                 //.orderBy(sortBy + " " + order)

@@ -12,9 +12,7 @@
 @main("Factuur") {
     <h1>Factuur @factuur</h1>
 
-    @helper.form(action = routes.Facturen.deleteInvoice(id)) {
-        <input type="submit" value="Verwijder deze factuur" class="btn danger">
-    }
+    <a href="@routes.Facturen.bewerkFactuur(id)" class="btn danger">Bewerk deze factuur</a>
 
     @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
         <table> 

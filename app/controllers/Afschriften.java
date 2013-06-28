@@ -72,7 +72,7 @@ public class Afschriften extends Controller {
       factuur.save();
       afschrift.update();
 
-      return redirect(routes.Facturen.toon(factuur.id));
+      return redirect(routes.Facturen.bewerkFactuur(factuur.id));
     }
 
     public static Result csvimport() {

@@ -9,15 +9,17 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.text.DecimalFormat;
 
-import akka.japi.Function;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 import models.*;
 import play.*;
+import play.data.Form;
+import static play.data.Form.*;
 import play.data.DynamicForm;
 import com.avaje.ebean.*;
 import play.libs.F.Promise;
+import play.libs.F.Function;
+import play.libs.*;
 import play.mvc.*;
 
 import views.html.*;
@@ -51,6 +53,32 @@ public class Facturen extends Controller {
       return ok(factuur.render(id, fact));
     }
 
+    public static Result bewerkFactuur(Long id) {
+        Form<Factuur> myForm = form(Factuur.class).fill(Factuur.find.byId(id));
+        Factuur factuur = Factuur.find.byId(id);
+        System.out.println("Editing "+factuur.toString());
+        return ok(editfactuur.render(id, myForm));
+    }
+    
+    public static Result saveFactuur(Long id) {
+        Form<Factuur> myForm = form(Factuur.class).bindFromRequest();
+        if(myForm.hasErrors()) {
+            return badRequest(editfactuur.render(id,myForm));
+        }
+        Logger.info("Form values: " + myForm.toString());
+        Logger.info("Form values: " + myForm.value().map(
+            new F.Function<Factuur,String>() {
+                public String apply(Factuur factuur)  {
+                  return factuur.toString();
+                }
+            }
+        ));
+        myForm.get().update(id);
+        // Logger.info("Saved invoice: "+myForm.get().omschrijving);
+        flash("success", "Factuur opgeslagen");
+        return redirect(routes.Facturen.list());
+    }
+
     public static Result markeerBetaling(Long factuurId, Long betalingId) {
       Factuur factuur = Factuur.find.byId(factuurId);
       Afschrift afschrift  = Afschrift.find.byId(betalingId);
@@ -71,17 +99,6 @@ public class Facturen extends Controller {
       Logger.info("Betaling bevat factuur: "+betaling.betaaldeFacturen.contains(factuur));
       factuur.save();
       return redirect(routes.Facturen.toon(factuurId));
-    }
-
-    public static Result saveFactuur(Long factuurId) {
-      Factuur factuur = FactuurContributie.find.byId(factuurId);
-      String[] postAction = request().body().asFormUrlEncoded().get("action");
-      if (postAction == null || postAction.length == 0) {
-          return badRequest("You must provide a valid action");
-      } else {
-         Logger.info(postAction[0]);
-      }
-      return TODO;
     }
 
     public static Result deleteInvoice(Long id) {

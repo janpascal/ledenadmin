@@ -1,0 +1,79 @@
+@(id: Long, myForm: Form[Factuur])
+
+@betrokkene(myForm: Form[Factuur]) = {@if(myForm("lid").value()==null){@myForm("naam").value()} else {@myForm("lid").value()}}
+
+@betaald(myForm: Form[Factuur]) = {@if(myForm.get().isBetaald()){Ja}else{Nee}}
+
+@main("Factuur") {
+    <h1>Bewerk factuur</h1>
+
+    @if(flash.containsKey("error")) {
+        <div class="alert-message error">
+            <p>
+                <strong>Oops!</strong> @flash.get("error")
+            </p>
+        </div>
+    } 
+    @if(flash.containsKey("success")) {
+        <div class="alert-message warning">
+            <strong>Done!</strong> @flash.get("success")
+        </div>
+    }
+
+
+    @helper.form(action = routes.Facturen.deleteInvoice(id)) {
+        <input type="submit" value="Verwijder deze factuur" class="btn danger">
+    }
+
+    @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
+    <fieldset class="fieldset">
+        <legend>Factuur @id</legend>
+        @helper.inputDate(myForm("datum"), '_label -> "Datum")
+        @helper.inputText(myForm("omschrijving"), '_label -> "Omschrijving") 
+        @helper.inputText(myForm("bedrag"), '_label -> "Bedrag") 
+        <dl class=" " id="betrokkene_field">
+            <dt><label for="betrokkene">Betrokkene</label></dt>
+            <dd>
+            <input type="text" id="betrokkene" name="betrokkene" value="@betrokkene(myForm)" disabled="disabled">
+            </dd>
+        </dl>
+
+        <dl class=" " id="betaald_field">
+            <dt><label for="betaald">Betaald</label></dt>
+            <dd>
+            <input type="text" id="betaald" name="betaald" 
+                  value="@betaald(myForm)" disabled="disabled">
+            </dd>
+        </dl>
+
+@*
+        <table> 
+        <tr><td>lid</td><td>
+           @if(factuur.lid==null){
+             @factuur.betrokkene()
+           } else {
+             <a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.betrokkene()</a>
+           }</td></tr>
+        <tr><td>betaald</td>
+                              <td>@if(factuur.isBetaald()){
+                                Ja
+                              } else {
+                                Nee
+                              }</td></tr>
+        </table>
+*@
+        <div class="actions">
+            <input type="submit" value="Opslaan" class="btn primary"> of 
+            <a href="@routes.Facturen.lijst()" class="btn">Annuleren</a> 
+        </div>
+
+    }
+
+   <script type="text/javascript" charset="utf-8">
+        $(function() {
+          $( "#datum" ).datepicker({ dateFormat: "dd/mm/yy", changeYear: true });
+        });
+   </script>
+
+
+}

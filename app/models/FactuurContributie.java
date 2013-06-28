@@ -45,6 +45,17 @@ public class FactuurContributie extends Factuur {
       return result;
     }
 
+   public static List<Integer> jarenMetContributieFacturen() {
+      List<Integer> jaren = new ArrayList<Integer>();
+      String sql = "select distinct jaar from factuur where jaar is not null order by jaar asc";
+      SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+      List<SqlRow> list = sqlQuery.findList();
+      for (SqlRow row: list) {
+        jaren.add(row.getInteger("jaar"));
+      }
+      return jaren;
+   }
+
     public static Finder<Long,FactuurContributie> find = new Finder<Long, FactuurContributie>(
             Long.class, FactuurContributie.class
     );

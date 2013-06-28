@@ -4,11 +4,7 @@
     <td>@factuur.datum.format("dd/MM/yyyy")</td>
     <td><a href="@routes.Facturen.toon(factuur.id)">@factuur.toString()</a></td>
     <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
-    <td>@if(factuur.lid!=null) {
-      @factuur.lid.getFirstName()
-    } else {
-      &mdash;
-    }</td>
+    <td>@factuur.betrokkene()</td>
 }
 
 @main("Afschriften") {

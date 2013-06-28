@@ -75,13 +75,8 @@ public class Leden extends Controller {
     }
     
     public static Result betaalStatus() {
-        List<Lid> leden = Lid.find.all();
-        List<Integer> jaren = new ArrayList<Integer>();
-        jaren.add(2009);
-        jaren.add(2010);
-        jaren.add(2011);
-        jaren.add(2012);
-        jaren.add(2013);
+        List<Lid> leden = Lid.find.all(); 
+        List<Integer> jaren = FactuurContributie.jarenMetContributieFacturen();
         return ok(betaalstatus.render(leden, jaren));
     }
     

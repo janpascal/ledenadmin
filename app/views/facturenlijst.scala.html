@@ -105,7 +105,11 @@ currentBetaaldFilter: String)
                             }
                         </td>
                         <td><a href="@routes.Facturen.toon(factuur.id)">@factuur</a></td>
-                        <td><a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.lid.getFirstName()</a></td>
+                        <td>@if(factuur.lid==null){
+                          @factuur.betrokkene()
+                        } else {
+                          <a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.betrokkene()</a>
+                        }</td>
 			<td><a href="@routes.Facturen.toon(factuur.id)">@if(factuur.isBetaald()){
                             Ja
                           } else {

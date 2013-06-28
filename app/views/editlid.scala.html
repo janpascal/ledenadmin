@@ -3,10 +3,16 @@
 @import helper._
 
 @persoonField(field: Field, className: String = "persoon") = {
-    @helper.input(field, '_label -> "Naam", '_class -> className) { (id, name, value, _) =>
-        <input type="text" name="@name" value="@value"> 
-        <a class="removePersoon btn danger">Verwijder</a>
-    }
+    <fieldset class="@className">
+        <legend>Personalia @field("name").value</legend>
+        @helper.input(field("name"), '_label -> "Naam") { (id, name, value, _) =>
+            <input type="text" name="@name" value="@value" class="persoonsnaam"> 
+            <a class="removePersoon btn danger">Verwijder persoon</a>
+        }
+        @helper.input(field("email"), '_label -> "E-mail") { (id, name, value, _) =>
+            <input type="text" name="@name" value="@value" class="persoonsemail"> 
+        }
+    </fieldset>
 }
 
 @bankrekeningField(field: Field, className: String = "bankrekening") = {
@@ -23,12 +29,12 @@
         <legend>Lid @id</legend>
 
         @helper.repeat(myForm("personen"), min = 1) { persoon =>
-                @persoonField(persoon("name"))
+                @persoonField(persoon)
         }
                 
         @* hidden template *@
         @persoonField(
-            myForm("personen[x].name"),
+            myForm("personen[x]"),
             className = "persoon_template"
         )
         
@@ -147,7 +153,10 @@
         // This is probably not the easiest way to do it. A jQuery plugin would help.
         
         var renumber = function() {
-            $('.persoon input').each(function(i) {
+            $('.persoonsnaam').each(function(i) {
+                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
+            })
+            $('.persoonsemail').each(function(i) {
                 $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
             })
             $('.bankrekening input').each(function(i) {

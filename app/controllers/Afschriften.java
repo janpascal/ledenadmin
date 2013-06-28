@@ -64,7 +64,8 @@ public class Afschriften extends Controller {
 
       Lid lid = null; // TODO probeer ahv naamveld in afschrift te matchen
 
-      Factuur factuur = new FactuurAlgemeen(afschrift.datum, lid, afschrift.bedrag,
+      // Algemene factuur
+      Factuur factuur = new Factuur(afschrift.datum, lid, afschrift.bedrag,
           afschrift.naam, afschrift.mededelingen);
 
       factuur.markeerBetaling(afschrift);

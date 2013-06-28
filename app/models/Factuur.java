@@ -13,15 +13,17 @@ import play.data.validation.*;
 import com.avaje.ebean.*;
 
 @Entity
-@Inheritance
-@DiscriminatorColumn(name = "_type", discriminatorType = DiscriminatorType.INTEGER)
-@DiscriminatorValue("0")
 public class Factuur extends Model {
+
+    public static final int FACTUUR_ALGEMEEN=2;
+    public static final int FACTUUR_CONTRIBUTIE=1;
 
     @GeneratedValue(strategy=GenerationType.AUTO, generator="factuur_seq_gen")
     @SequenceGenerator(name="factuur_seq_gen", sequenceName="FACTUUR_SEQ")
     @Id
     public Long id;
+
+    public Integer type;
 
     @Constraints.Required
     public BigDecimal bedrag;
@@ -36,21 +38,47 @@ public class Factuur extends Model {
     @ManyToOne
     public Afschrift betaling;
 
+    // Alleen voor contributiefacturen
+    public Integer jaar;
+
+    // Alleen voor algemene facturen
+    public String naam;
+    public String omschrijving;
+
     public Factuur(Date datum, Lid lid, BigDecimal bedrag) {
+        this.type = FACTUUR_ALGEMEEN;
         this.datum = datum;
         this.lid = lid;
         this.bedrag = bedrag;
     }
 
+    public Factuur(Date datum, Lid lid, BigDecimal bedrag, int jaar) {
+        this.type = FACTUUR_CONTRIBUTIE;
+        this.datum = datum;
+        this.lid = lid;
+        this.bedrag = bedrag;
+        this.jaar = jaar;
+    }
+
+    public Factuur(Date datum, Lid lid, BigDecimal bedrag, String naam, String omschrijving) {
+        this.type = FACTUUR_ALGEMEEN;
+        this.datum = datum;
+        this.lid = lid;
+        this.bedrag = bedrag;
+        this.naam = naam;
+        this.omschrijving = omschrijving;
+    }
+
     public String betrokkene() {
       if(lid != null) {
           return lid.getFirstName();
+      } else if (naam != null) {
+        return naam;
       } else {
         return "";
       }
     }
 
-   
     public static Page<Factuur> page(int page, int pageSize, String sortBy, String order, String filter, int jaarFilter, String betaaldFilter) {
       /*
         Date jan1 = new GregorianCalendar(jaarFilter,0,1,0,0).getTime();
@@ -167,6 +195,35 @@ public class Factuur extends Model {
         return betaling != null;
     }
     
+    // genereer contributiefacturen voor een bepaald jaar. Alleen voor de 
+    // leden die in dat jaar lid waren
+    public static List<Factuur> generateInvoices(int year, BigDecimal amount) {
+      Date jan1 = new GregorianCalendar(year,0,1,0,0).getTime();
+      Date dec31 = new GregorianCalendar(year+1,0,1,0,0).getTime();
+      // Find eligible members
+      List<Lid> leden = Lid.find.where()
+         .or(Expr.isNull("lidSinds"), Expr.lt("lidSinds", dec31))
+         .or(Expr.isNull("lidTot"), Expr.gt("lidTot", jan1))
+         .findList();
+      List<Factuur> result = new ArrayList<Factuur>(leden.size());
+      Date now = new Date();
+      for(Lid lid: leden) {
+        result.add(new Factuur(now, lid, amount, year));
+      }
+      return result;
+    }
+
+   public static List<Integer> jarenMetContributieFacturen() {
+      List<Integer> jaren = new ArrayList<Integer>();
+      String sql = "select distinct jaar from factuur where type="+FACTUUR_CONTRIBUTIE+" and jaar is not null order by jaar asc";
+      SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+      List<SqlRow> list = sqlQuery.findList();
+      for (SqlRow row: list) {
+        jaren.add(row.getInteger("jaar"));
+      }
+      return jaren;
+   }
+
     public List<Afschrift> possiblePayments() {
         if(lid==null || lid.bankrekeningen.isEmpty()) {
           if (betaling != null) {
@@ -205,4 +262,12 @@ public class Factuur extends Model {
     public static Finder<Long,Factuur> find = new Finder<Long, Factuur>(
             Long.class, Factuur.class
     );
+
+    public String toString() {
+      switch (type) {
+        case FACTUUR_CONTRIBUTIE: return "Contributie "+jaar;
+        case FACTUUR_ALGEMEEN: return naam + " (" + omschrijving + ")";
+        default: return "FOUT, ongeldig factuurtype "+type;
+      }
+    }
 }

@@ -82,10 +82,11 @@ public class Lid extends Model {
         return "";
     }
     
-    private FactuurContributie contributieFactuur(int jaar) {
-        List<FactuurContributie> facturen = 
-                FactuurContributie.find
+    private Factuur contributieFactuur(int jaar) {
+        List<Factuur> facturen = 
+                Factuur.find
                   .where()
+                    .eq("type", Factuur.FACTUUR_CONTRIBUTIE)
                     .eq("jaar",jaar)
                     .eq("lid", this)
                   .findList();

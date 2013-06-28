@@ -65,14 +65,6 @@ public class Facturen extends Controller {
         if(myForm.hasErrors()) {
             return badRequest(editfactuur.render(id,myForm));
         }
-        Logger.info("Form values: " + myForm.toString());
-        Logger.info("Form values: " + myForm.value().map(
-            new F.Function<Factuur,String>() {
-                public String apply(Factuur factuur)  {
-                  return factuur.toString();
-                }
-            }
-        ));
         myForm.get().update(id);
         // Logger.info("Saved invoice: "+myForm.get().omschrijving);
         flash("success", "Factuur opgeslagen");
@@ -122,7 +114,7 @@ public class Facturen extends Controller {
       currencyFormat.setParseBigDecimal(true);
       BigDecimal amount = (BigDecimal) currencyFormat.parse(amountString);
       Logger.info("Generating invoices for year "+year+" ("+amount+")");
-      List<Factuur> facturen = FactuurContributie.generateInvoices(year, amount);
+      List<Factuur> facturen = Factuur.generateInvoices(year, amount);
       for(Factuur f: facturen) {
         f.save();
       }

@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Global extends GlobalSettings {
                     int aantalFacturen = 0;
                     for(int jaar=2009; jaar<=2013; jaar++) {
                         for( Lid lid: Lid.find.all()) {
-                            Factuur factuur = new FactuurContributie(new Date(), lid, 20, jaar);
+                            Factuur factuur = new Factuur(new Date(), lid, new BigDecimal(20), jaar);
                             factuur.save();
                             aantalFacturen++;
                         }

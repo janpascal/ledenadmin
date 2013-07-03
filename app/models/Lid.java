@@ -10,6 +10,7 @@ import play.data.validation.*;
 
 import com.avaje.ebean.*;
 import com.avaje.ebean.annotation.PrivateOwned;
+import org.apache.commons.mail.EmailException;
 
 @Entity
 public class Lid extends Model {
@@ -36,6 +37,11 @@ public class Lid extends Model {
     @PrivateOwned
     @javax.persistence.OrderBy("id ASC")
     public List<Bankrekening> bankrekeningen;
+
+    public Lid() {
+        this.personen = new ArrayList<Persoon>();
+        this.bankrekeningen = new ArrayList<Bankrekening>();
+    }
 
     public Lid(String name, Date lidSinds) {
         this.personen = new ArrayList<Persoon>();

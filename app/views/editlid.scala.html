@@ -24,6 +24,9 @@
 
 @main("Bewerk lid") {
     <h1>Bewerk lid</h1>
+        @helper.form(action = routes.Probes.sendProbe(id)) {
+            <input type="submit" value="Stuur emailverificatiemail" class="btn success">
+        }
     @helper.form(action = routes.Leden.saveLid(id), 'id -> "form") {
     <fieldset class="fieldset">
         <legend>Lid @id</legend>

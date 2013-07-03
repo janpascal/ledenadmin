@@ -7,11 +7,20 @@ GET     /                           controllers.Application.index()
 
 GET     /leden/lijst                controllers.Leden.lijst()
 GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)
+GET     /leden/nieuw                controllers.Leden.nieuwLid()
 POST	/leden/savelid/:id	    controllers.Leden.saveLid(id: Long)
 GET     /leden/betaalstatus		controllers.Leden.betaalStatus()
 GET     /leden/csvimport            controllers.Leden.csvimport()
 POST	/leden/upload		    controllers.Leden.upload()
 
+# Probes
+GET     /probes                     controllers.Probes.index()
+GET     /probes/lijst               controllers.Probes.lijst()
+POST    /probes/sendprobe/:lidid    controllers.Probes.sendProbe(lidid: Long)
+GET     /probes/verifyimg/:token    controllers.Probes.verifyImage(token: String)
+GET     /probes/verify/:token       controllers.Probes.verify(token: String)
+
+# Afschriften
 GET     /afschriften/list                controllers.Afschriften.list()
 GET     /afschriften/lijst                controllers.Afschriften.lijst(p:Int ?= 0, s ?= "datum", o ?= "asc", f ?= "", fjaar ?= "", fverantw?= "")
 GET     /afschriften/toon/:id      controllers.Afschriften.toon(id: Long)

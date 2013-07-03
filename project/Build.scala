@@ -13,7 +13,8 @@ object ApplicationBuild extends Build {
     javaJdbc,
     javaEbean,
     "net.sf.opencsv" % "opencsv" % "2.3",
-    "mysql" % "mysql-connector-java" % "5.1.18"
+    "mysql" % "mysql-connector-java" % "5.1.18",
+    "org.apache.commons" % "commons-email" % "1.3.1"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

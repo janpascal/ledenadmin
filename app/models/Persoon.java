@@ -9,6 +9,8 @@ import play.data.validation.*;
 
 import com.avaje.ebean.*;
 
+import org.apache.commons.mail.EmailException;
+
 @Entity
 public class Persoon extends Model {
 
@@ -25,6 +27,9 @@ public class Persoon extends Model {
     
     public String email;
     
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="persoon", orphanRemoval = true)
+    @javax.persistence.OrderBy("id ASC")
+    public List<EmailCheckProbe> probes;
 
     public Persoon(Lid lid, String name) {
         this.lid = lid; 
@@ -36,6 +41,23 @@ public class Persoon extends Model {
         this.name = name;
         this.email = email;
     }
+
+    public Date emailLastVerified() {
+      String sql = "select max(r.timestamp) as last "+
+        "from email_check_probe p "+
+        "  join probe_response r on r.probe_id=p.id "+
+        "where p.persoon_id=:persoonid and "+
+        "p.email=:email";
+    
+      SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+      sqlQuery.setParameter("persoonid", this.id);
+      sqlQuery.setParameter("email", this.email);
+
+      SqlRow row = sqlQuery.findUnique();
+
+      return row.getDate("last");
+    }
+
     public static void create(Persoon p) {
         p.save();
     }

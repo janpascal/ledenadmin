@@ -1,5 +1,19 @@
 @(leden: List[Lid])
 
+@persoontooltip(p:Persoon) = {
+    @if(p.email==null || p.email.isEmpty) {
+      Geen emailadres bekend
+    } else {
+      @p.email 
+      @defining(p.emailLastVerified) {last => 
+         @if(last==null) {
+            (Nooit geverifieerd)
+         } else { 
+            (Laatst geverifieerd: @last.format("dd/MM/yyyy"))
+         }
+      }
+    }
+}
 @main("Ledenlijst") {
     <h1>Ledenlijst</h1>
     <table> 
@@ -16,7 +30,7 @@
 			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.id</a></td>
 			  <td>
                           @for((p,i) <- lid.personen.zipWithIndex) {
-			      @p.name 
+			      <span title="@persoontooltip(p)">@p.name</span>
                               @if(i != lid.personen.size-1) { &mdash; }
                           }</td>
 			  <td>@lid.address</td>
@@ -35,4 +49,13 @@
     
     <a class="btn success" id="import"
     href="@routes.Leden.csvimport()">Importeer een CSV-ledenlijst</a>
+
+    <a class="btn success" id="nieuw"
+    href="@routes.Leden.nieuwLid()">Nieuw lid</a>
+
+    <script>
+        $(function() {
+            $( document ).tooltip();
+        });
+     </script>
 }

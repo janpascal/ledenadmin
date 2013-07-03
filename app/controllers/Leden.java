@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import akka.japi.Function;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.mail.EmailException;
 
 import models.*;
 import play.*;
@@ -36,8 +37,15 @@ public class Leden extends Controller {
     public static Result bewerkLid(Long id) {
         Form<Lid> myForm = form(Lid.class).fill(Lid.find.byId(id));
         Lid lid = Lid.find.byId(id);
-        System.out.println("Editing "+lid.toString());
+        Logger.info("Editing "+lid.toString());
         return ok(editlid.render(id, myForm));
+    }
+    
+    public static Result nieuwLid() {
+        Lid lid = new Lid();
+        Form<Lid> myForm = form(Lid.class).fill(lid);
+        Logger.info("Nieuw lid");
+        return ok(editlid.render(-1L, myForm));
     }
     
     public static Result saveLid(Long id) {
@@ -49,28 +57,28 @@ public class Leden extends Controller {
         // Workaround for bug in Ebean: if all 'personen' or
         // 'bankrekeningen' are removed, they are not
         // removed from the database
-        Lid oldLid = Lid.find.byId(id);
-        for(Persoon p: oldLid.personen) {
-          p.delete();
+        if(id>=0) {
+            Lid oldLid = Lid.find.byId(id);
+            for(Persoon p: oldLid.personen) {
+              p.delete();
+            }
+            for(Bankrekening b: oldLid.bankrekeningen) {
+              b.delete();
+            }
         }
-        for(Bankrekening b: oldLid.bankrekeningen) {
-          b.delete();
-        }
-        myForm.get().update(id);
         Lid lid = myForm.get();
-        Logger.info("Updating"+lid.toString());
-        Logger.info("   Personen: ");
-        for(Persoon p: lid.personen) {
-          Logger.info("        "+p.name);
+        if(id>=0) {
+            lid.update(id);
+        } else {
+          lid.save();
+          id=lid.id;
         }
-        Logger.info("   Number of bank accounts: "+lid.bankrekeningen.size());
-        lid = Lid.find.byId(id);
         Logger.info("   Number of bank accounts in database: "+lid.bankrekeningen.size());
         Logger.info("   Personen: ");
         for(Persoon p: lid.personen) {
           Logger.info("        "+p.name);
         }
-        // flash()
+        flash("success", "Lid "+lid.getFirstName()+" opgeslagen");
         return redirect(routes.Leden.lijst());
     }
     
@@ -79,10 +87,10 @@ public class Leden extends Controller {
         List<Integer> jaren = Factuur.jarenMetContributieFacturen();
         return ok(betaalstatus.render(leden, jaren));
     }
-    
+
     public static Result csvimport() {
         return ok(csvimport.render());
-   }
+    }
     
     public static Result upload() {
         RequestBody mainbody = request().body();
@@ -152,7 +160,7 @@ public class Leden extends Controller {
                 try {
                     lidSinds = dateFormatter2.parse(sindsString);
                 } catch (Exception e2) {
-                    System.out.println("Error parsing date string "+sindsString);
+                    Logger.error("Error parsing date string "+sindsString);
                     e2.printStackTrace();
                     lidSinds = null;
                 }
@@ -168,7 +176,7 @@ public class Leden extends Controller {
                 try {
                     lidTot = dateFormatter2.parse(totString);
                 } catch (Exception e2) {
-                    System.out.println("Error parsing date string "+totString);
+                    Logger.error("Error parsing date string "+totString);
                     e2.printStackTrace();
                     lidTot = null;
                 }
@@ -184,28 +192,7 @@ public class Leden extends Controller {
               }
             }
 
-            //Lid lid = new Lid(name1, name2, address, lidSinds);    
             Lid.create(lid);
         }
     }
-    /*
-    public static Result testtesttest() {
-        Promise<Integer> promiseOfInt = play.libs.Akka.future(
-          new Callable<Integer>() {
-            public Integer call() {
-              return intensiveComputation();
-            }
-          }
-        );
-        return async(
-          promiseOfInt.map(
-            new Function<Integer,Result>() {
-              public Result apply(Integer i) {
-                return ok("Got result: " + i);
-              } 
-            }
-          )
-        );
-      }
-  */
 }

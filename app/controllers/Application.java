@@ -11,12 +11,7 @@ import views.html.*;
 public class Application extends Controller {
   
     public static Result index() {
-        return ok(index.render("Your new application is ready."));
+        return ok(index.render("Ledenadministratie"));
     }
     
-    public static Result ledenlijst() {
-        List<Lid> leden = Lid.find.all();
-        return ok(ledenlijst.render(leden));
-    }
-  
 }

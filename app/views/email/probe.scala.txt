@@ -1,0 +1,7 @@
+@(imageUrl: String, verifyUrl: String)
+
+Het werkt!
+
+Klik op de volgende link om uw gegevens te bevestigen:
+@verifyUrl
+

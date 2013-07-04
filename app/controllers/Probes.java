@@ -9,8 +9,9 @@ import java.text.SimpleDateFormat;
 import akka.japi.Function;
 
 import au.com.bytecode.opencsv.CSVReader;
-import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.EmailException;
+
+import com.feth.play.module.mail.Mailer;
+import com.feth.play.module.mail.Mailer.Mail.Body;
 
 import models.*;
 import play.*;
@@ -37,79 +38,58 @@ public class Probes extends Controller {
     }
     
     public static Result sendProbe(Long lidId) {
-      Lid lid = Lid.find.byId(lidId);
-      try {
+        Lid lid = Lid.find.byId(lidId);
         for(Persoon p: lid.personen) {
           sendProbe(p);
         }
         flash("success", "Emailverificatie verstuurd");
-      } catch (EmailException e) {
-        flash("error", "Emailverificatie mislukt: "+e.getMessage());
-        Logger.error("Fout bij versturen email", e);
-      }
-      return redirect(routes.Probes.lijst());
+        return redirect(routes.Probes.lijst());
     }
 
-    public static void sendProbe(Persoon persoon) throws EmailException {
-      EmailCheckProbe probe = new EmailCheckProbe(persoon, EmailCheckProbe.ProbeType.EMAIL);
-      probe.save();
-      sendProbe(probe);
+    public static void sendProbe(Persoon persoon) {
+        EmailCheckProbe probe = new EmailCheckProbe(persoon, EmailCheckProbe.ProbeType.EMAIL);
+        probe.save();
+        sendProbe(probe);
     }
 
-    public static void sendProbe(EmailCheckProbe probe) throws EmailException {
-      Configuration conf = Play.application().configuration();
-      // Create the email message
-      HtmlEmail email = new HtmlEmail();
-      email.setHostName(conf.getString("mail.hostname"));
-      email.addTo(probe.email, probe.persoon.name);
-      email.setFrom(conf.getString("mail.from.address"), conf.getString("mail.from.name"));
-      email.setSubject("Token mail");
-      
-      // embed the image and get the content id
-      //URL url = new URL("http://www.apache.org/images/asf_logo_wide.gif");
-      String imageUrl = controllers.routes.Probes.verifyImage(probe.token).absoluteURL(request());
-      String verifyUrl = controllers.routes.Probes.verify(probe.token).absoluteURL(request());
-      //String cid = email.embed(url, "Apache logo");
-      
-      // set the html message
-      StringBuilder html = new StringBuilder();
-      html.append("<html>");
-      html.append("The apache logo - <img src=\""+imageUrl+"\">");
-      html.append("Click <a href=\""+verifyUrl+"\">this link</a> to verify your email address");
-      html.append("</html>");
-      email.setHtmlMsg(html.toString());
+    public static void sendProbe(EmailCheckProbe probe) {
+        Configuration conf = Play.application().configuration();
 
-      // set the alternative message
-      email.setTextMsg("Your email client does not support HTML messages");
+        // Create the email message
+        String imageUrl = controllers.routes.Probes.verifyImage(probe.token).absoluteURL(request());
+        String verifyUrl = controllers.routes.Probes.verify(probe.token).absoluteURL(request());
 
-      // send the email
-      email.send();
+        String txt =  views.txt.email.probe.render(imageUrl, verifyUrl).toString();
+        String html =  views.html.email.probe.render(imageUrl, verifyUrl).toString();
+
+        final Body body = new Body(txt, html);
+        Mailer.getDefaultMailer().sendMail("Token mail", body, probe.email);
     }
 
     public static Result verifyImage(String token) {
-      EmailCheckProbe probe = EmailCheckProbe.find.where()
-          .eq("token", token)
-          .findUnique();
-      if(probe!=null) {
-        Logger.info("Probe "+token+" for "+probe.email+" answered by image url view");
-        probe.addResponse(ProbeResponse.ResponseType.IMGVIEW);
-        probe.save();
-      }
-      return redirect(routes.Assets.at("images/logo.png"));
+        EmailCheckProbe probe = EmailCheckProbe.find.where()
+            .eq("token", token)
+            .findUnique();
+        if(probe!=null) {
+          Logger.info("Probe "+token+" for "+probe.email+" answered by image url view");
+          probe.addResponse(ProbeResponse.ResponseType.IMGVIEW);
+          probe.save();
+        }
+        return redirect(routes.Assets.at("images/logo.png"));
     }
     
 
     public static Result verify(String token) {
-      EmailCheckProbe probe = EmailCheckProbe.find.where()
-          .eq("token", token)
-          .findUnique();
-      if(probe!=null) {
-        Logger.info("Probe "+token+" for "+probe.email+" answered by verify url view");
-        probe.addResponse(ProbeResponse.ResponseType.WEBLINK);
-        probe.save();
-      }
-      //return ok(probe_verify.render(probe));
-      return TODO;
+        EmailCheckProbe probe = EmailCheckProbe.find.where()
+            .eq("token", token)
+            .findUnique();
+        if(probe!=null) {
+          Logger.info("Probe "+token+" for "+probe.email+" answered by verify url view");
+          probe.addResponse(ProbeResponse.ResponseType.WEBLINK);
+          probe.save();
+        }
+        //return ok(probe_verify.render(probe));
+        return TODO;
     }
     
 }

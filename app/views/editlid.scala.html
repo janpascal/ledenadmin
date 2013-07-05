@@ -92,19 +92,27 @@
             <td>@factuur.datum.format("dd/MM/yyyy")</td>
             <td><a href="@routes.Facturen.toon(factuur.id)">@factuur.toString()</a></td>
             <td>@if(factuur.isBetaald()){
-                    Ja
+                  <a href="@routes.Afschriften.toon(factuur.betaling.id)">
+                   @factuur.betaling.datum.format("dd/MM/yyyy"),
+                   @factuur.betaling.naam,
+                   @factuur.betaling.bedrag EUR,
+                   "@factuur.betaling.mededelingen" 
+                   <a>
                   } else {
                     Nee
                   }</td>
             <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
             <td>
-            @for(afschrift <- factuur.possiblePayments() ) {
-              <span class="betaling
-                @if(factuur.betaling==afschrift) { gekozen }
-                @if(afschrift.isVerantwoord()) { verantwoord }
-                ">
-                @afschrift.datum.format("dd/MM/yyyy")
-              </span>
+            @if(!factuur.isBetaald()) {
+                @for(afschrift <- factuur.possiblePayments() ) {
+                  <a href="@routes.Afschriften.toon(afschrift.id)" 
+                    class="betaling
+                        @if(factuur.betaling==afschrift) { gekozen }
+                        @if(afschrift.isVerantwoord()) { verantwoord }
+                    ">
+                    @afschrift.datum.format("dd/MM/yyyy")
+                  </a>
+               }
             }
             </td>
         </tr>

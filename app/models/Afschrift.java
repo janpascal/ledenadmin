@@ -2,6 +2,7 @@ package models;
 
 import java.util.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import javax.persistence.*;
 
 import play.Logger;
@@ -104,7 +105,8 @@ public class Afschrift extends Model {
     }
 
     public String toString() {
-      return "Afschrift "+datum.toString()+" "+naam+" "+bedrag;
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        return df.format(datum)+", "+naam+", "+bedrag+" EUR, \""+mededelingen+"\"";
     }
 
     public static Finder<Long,Afschrift> find = new Finder<Long, Afschrift>(

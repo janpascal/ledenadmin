@@ -114,10 +114,7 @@ public class Leden extends Controller {
             }
         }
 
-        if (jaren.length()==0) {
-            flash("error", "Geen achterstallige contributie voor lid " + lid.getFirstName() + " dus geen mail verstuurd");
-            return null;
-        }
+        boolean achterstand = (jaren.length()!=0);
 
         // Create the email message
         HtmlEmail email = new HtmlEmail();
@@ -125,7 +122,9 @@ public class Leden extends Controller {
         if (Play.isDev()) {
             email.addTo("janpascal@vanbest.org", "Geadresseerde");
         } else {
-            email.addTo(lid.personen.get(0).email, lid.getFirstName());
+            for(Persoon p: lid.personen) {
+                email.addTo(p.email, p.name);
+            }
         }
         email.addCc(emailPenningmeester, naamPenningmeester);
         email.setFrom(emailPenningmeester, naamPenningmeester);
@@ -136,14 +135,21 @@ public class Leden extends Controller {
         String mainCid = email.embed(mainCssUrl, "main.css");
         String bootstrapCid = email.embed(bootstrapCssUrl, "bootstrap.css");
 
-        Logger.info("cssUrl: "+ mainCssUrl);
-
-        String txt = views.txt.email.contributieachterstand
-           .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
-           jaren.toString(), bedrag).toString();
-        String html = views.html.email.contributieachterstand
-           .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
-           jaren.toString(), bedrag).toString();
+        String txt;
+        String html;
+        if (achterstand) {
+            txt = views.txt.email.contributieachterstand
+               .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
+               jaren.toString(), bedrag).toString();
+            html = views.html.email.contributieachterstand
+               .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
+               jaren.toString(), bedrag).toString();
+        } else {
+            txt = views.txt.email.contributieoverzicht
+               .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester).toString();
+            html = views.html.email.contributieoverzicht
+               .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester).toString();
+        }
 
       email.setHtmlMsg(html);
       email.setTextMsg(txt);

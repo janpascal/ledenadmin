@@ -1,0 +1,19 @@
+@(lid: Lid, mainCid: String, bootstrapCid: String, bankrekening: String, naamVereniging: String, naamPenningmeester: String)
+
+Geacht lid,
+
+Hierbij ontvangt u een overzicht van uw contributiebetalingen van de afgelopen
+jaren. Wilt u me laten weten als er iets niet klopt? Dan kan ik mijn
+administratie op orde maken.
+
+Bij voorbaat hartelijk dank voor uw medewerking.
+
+Met vriendelijke groet,
+
+@naamPenningmeester
+Penningmeester @naamVereniging
+
+Contributie-overzicht:
+
+@for(factuur <- lid.contributieFacturen()) {- De contributie over @factuur.jaar (@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00") euro) is @if(factuur.isBetaald()){betaald op @factuur.betaling.datum.format("dd/MM/yyyy") onder vermelding van "@factuur.betaling.mededelingen".} else {nog niet betaald.} 
+}

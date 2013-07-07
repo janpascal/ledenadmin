@@ -1,0 +1,47 @@
+@(lid: Lid, mainCid: String, bootstrapCid: String, bankrekening: String, naamVereniging: String, naamPenningmeester: String)
+
+<link rel="stylesheet" href="cid:@mainCid">
+<link rel="stylesheet" href="cid:@bootstrapCid">
+<p>Geacht lid,</p>
+
+<p>
+Hierbij ontvangt u een overzicht van uw contributiebetalingen van de afgelopen
+jaren. Wilt u me laten weten als er iets niet klopt? Dan kan ik mijn
+administratie op orde maken.
+</p>
+
+<p>
+Bij voorbaat hartelijk dank voor uw medewerking.
+</p>
+
+<p>
+Met vriendelijke groet,
+</p>
+<p>
+@naamPenningmeester<br>
+Penningmeester @naamVereniging
+</p>
+
+<h2>Contributie-overzicht</h2>
+<table class="zebra-striped">
+    <tr>
+      <th>Jaar</th>
+      <th>Bedrag (euro)</th>
+      <th>Betaling op</th>
+      <th>Onder vermelding van</th>
+    </tr>
+    @for(factuur <- lid.contributieFacturen()) {
+      <tr>
+          <td>@factuur.jaar</td>
+          <td>@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00")</td>
+          @if(factuur.isBetaald()){
+              <td>@factuur.betaling.datum.format("dd/MM/yyyy")</td>
+              <td>@factuur.betaling.mededelingen</td>
+          } else {
+              <td>&mdash;</td>
+              <td>&mdash;</td>
+          }
+      </tr>
+    }
+</table>
+

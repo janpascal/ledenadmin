@@ -4,6 +4,7 @@
     <h1>Betaalstatus</h1>
     <table> 
     <tr>
+    <th></th>
     <th>lidnr</th>
     <th>naam</th>
     <th>adres</th>
@@ -13,6 +14,7 @@
     </tr>
 	@for(lid <- leden) {
           <tr>
+              <td><a class="btn success" href="@routes.Leden.toonHerinnering(lid.id)">Mail</a></td>
 			  <td>@lid.id</td>
 			  <td>@lid.getFirstName()</td>
 			  <td>@lid.address</td>
@@ -30,7 +32,4 @@
 	      </tr>
 	} 
     </table>
-    
-    <a class="btn success" id="import"
-    href="@routes.Leden.csvimport()">Importeer een CSV-ledenlijst</a>
 }

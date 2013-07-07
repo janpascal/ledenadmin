@@ -17,3 +17,4 @@ tmp
 /.target
 .*.swp
 conf/db.conf
+conf/ledenadmin.conf

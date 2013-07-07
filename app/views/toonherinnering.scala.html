@@ -1,0 +1,28 @@
+@(lid: Lid, email: org.apache.commons.mail.HtmlEmail, html: String)
+@import org.apache.commons.mail.HtmlEmail
+@import javax.mail.internet.InternetAddress
+
+@main("Stuur herinneringsmail") {
+
+<br>
+<br>
+<br>
+<p>
+Verstuur de volgende mail aan 
+@for(address <- email.getToAddresses()) {
+@* @address.getPersonal() <@address.getAddress()> *@
+@address
+}?
+</p>
+
+<blockquote>
+@Html(html)
+</blockquote>
+
+@helper.form(action = routes.Leden.verstuurHerinnering(lid.id)) {
+    <input type="submit" value="Verstuur mail" class="btn success">
+    of
+    <a href="@routes.Leden.lijst()">Annuleren</a>
+}
+
+}

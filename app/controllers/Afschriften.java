@@ -193,17 +193,6 @@ public class Afschriften extends Controller {
             return redirect(routes.Application.index());
         }
         java.util.Map<java.lang.String,java.lang.String[]> map = body.asFormUrlEncoded();
-        /*
-        String[] items = map.get("createMissingBankStatements");
-        boolean createMissing;
-        if(items == null) {
-           createMissing = false;
-        } else {  
-            for(String s: items) {
-              Logger.info("Item: "+s);
-            }
-        }
-        */
         boolean createMissing = body.asFormUrlEncoded().get("createMissingBankStatements") != null;
         Logger.info("Creating missing: "+createMissing);
         FilePart part = body.getFile("bestand");
@@ -262,6 +251,7 @@ public class Afschriften extends Controller {
                 }
                 int jaar = Integer.parseInt(jaarString);
 
+                Logger.info("============================================");
                 Logger.info(datumString+","+naam+","+bedragString+","+jaarString+","+mededelingen);
 
                 // Find lid
@@ -270,7 +260,7 @@ public class Afschriften extends Controller {
                     .findList();
 
                 if(misschien.size()!=1) {
-                  Logger.warn("-- NUMBER != 1");
+                  Logger.warn("-- Aantal mogelijke leden != 1");
                   for( Lid l: misschien ) {
                       Logger.info("  "+l.toString());
                   }
@@ -295,7 +285,11 @@ public class Afschriften extends Controller {
                 }
 
                 Factuur factuur = facturen.get(0);
-                //Logger.info("Geselecteerde factuur: "+factuur);
+                if (factuur.isBetaald()) {
+                    Logger.info("Klaar: contributie al betaald : "
+                      + lid.getFirstName() + "(" + factuur.jaar + ")");
+                    continue;
+                }
 
                 List<Afschrift> afschriften = factuur.possiblePayments();
                 Afschrift afschrift = null;
@@ -328,12 +322,18 @@ public class Afschriften extends Controller {
 
                 //Logger.info("Geselecteerd afschrift: "+afschrift);
 
+                if (afschrift.isVerantwoord()) {
+                    Logger.info("Gevonden afschrift verantwoord : "
+                       + lid.getFirstName() + "(" + factuur.jaar + "): " 
+                       + afschrift.toString());
+                    continue;
+                }
                 factuur.betaling = afschrift;
                 afschrift.betaaldeFacturen.add(factuur);
                 factuur.update();
                 afschrift.update();
 
-                //Logger.info("Factuur "+factuur+" betaald door "+afschrift);
+                Logger.info("Factuur "+factuur+" gemarkeerd als betaald door "+afschrift);
             }
           }
         }

@@ -1,0 +1,30 @@
+@(lid: Lid, mainCid: String, bootstrapCid: String, bankrekening: String, naamVereniging: String, naamPenningmeester:
+String, jaren: String, bedrag: java.math.BigDecimal)
+Geacht lid,
+
+Uit mijn administratie is gebleken dat u achter loopt in het betalen van de
+contributie. De contributie over het jaar of de jaren @jaren is nog niet
+overgemaakt. Zou u ervoor willen zorgen dat de openstaande contributie,
+€@utils.FormatHelper.formatCurrency(bedrag, "0.00"), zo spoedig mogelijk alsnog wordt overgemaakt?
+U kunt de contributie overmaken op de bankrekening van de vereniging, 
+nummer @bankrekening ten name van @naamVereniging, onder vermelding
+van "Contributie @jaren".
+
+Mocht u dit bericht ten onrechte ontvangen, dan is er iets mis in mijn
+administratie. Kunt u me dan laten weten op welke datum u de contributie(s) hebt
+betaald?
+
+Alvast hartelijk dank voor uw betaling.
+
+
+Met vriendelijke groet,
+
+@naamPenningmeester
+Penningmeester @naamVereniging
+
+
+Contributie-overzicht:
+
+@for(factuur <- lid.contributieFacturen()) {- De contributie over @factuur.jaar (@utils.FormatHelper.formatCurrency(factuur.bedrag, "0.00") euro) is @if(factuur.isBetaald()){betaald op @factuur.betaling.datum.format("dd/MM/yyyy") onder vermelding van "@factuur.betaling.mededelingen".} else {nog niet betaald.} 
+}
+

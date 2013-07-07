@@ -140,6 +140,17 @@ public class Lid extends Model {
         return facturen;
     }
     
+    public List<Factuur> contributieFacturen() {
+        List<Factuur> facturen = 
+                Factuur.find
+                  .where()
+                    .eq("lid", this)
+                    .eq("type", Factuur.FACTUUR_CONTRIBUTIE) 
+                  .order("jaar")
+                  .findList();
+        return facturen;
+    }
+    
     public static void create(Lid lid) {
         lid.save();
     }

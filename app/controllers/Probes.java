@@ -53,8 +53,6 @@ public class Probes extends Controller {
     }
 
     public static void sendProbe(EmailCheckProbe probe) {
-        Configuration conf = Play.application().configuration();
-
         // Create the email message
         String imageUrl = controllers.routes.Probes.verifyImage(probe.token).absoluteURL(request());
         String verifyUrl = controllers.routes.Probes.verify(probe.token).absoluteURL(request());

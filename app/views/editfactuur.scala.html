@@ -7,20 +7,6 @@
 @main("Factuur") {
     <h1>Bewerk factuur</h1>
 
-    @if(flash.containsKey("error")) {
-        <div class="alert-message error">
-            <p>
-                <strong>Oops!</strong> @flash.get("error")
-            </p>
-        </div>
-    } 
-    @if(flash.containsKey("success")) {
-        <div class="alert-message warning">
-            <strong>Done!</strong> @flash.get("success")
-        </div>
-    }
-
-
     @helper.form(action = routes.Facturen.deleteInvoice(id)) {
         <input type="submit" value="Verwijder deze factuur" class="btn danger">
     }

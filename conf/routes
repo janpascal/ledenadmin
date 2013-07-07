@@ -10,6 +10,8 @@ GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)
 GET     /leden/nieuw                controllers.Leden.nieuwLid()
 POST	/leden/savelid/:id	    controllers.Leden.saveLid(id: Long)
 GET     /leden/betaalstatus		controllers.Leden.betaalStatus()
+GET     /leden/toonherinnering/:id controllers.Leden.toonHerinnering(id: Long) 
+POST    /leden/verstuurherinnering/:id controllers.Leden.verstuurHerinnering(id: Long) 
 GET     /leden/csvimport            controllers.Leden.csvimport()
 POST	/leden/upload		    controllers.Leden.upload()
 

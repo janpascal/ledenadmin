@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.*;
 import java.lang.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.text.SimpleDateFormat;
@@ -9,7 +10,9 @@ import java.text.SimpleDateFormat;
 import akka.japi.Function;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.EmailException;
+
 
 import models.*;
 import play.*;
@@ -86,6 +89,92 @@ public class Leden extends Controller {
         List<Lid> leden = Lid.find.all(); 
         List<Integer> jaren = Factuur.jarenMetContributieFacturen();
         return ok(betaalstatus.render(leden, jaren));
+    }
+
+    static class HtmlTxt {
+      String html;
+      String txt;
+      HtmlEmail email;
+    }
+
+    public static HtmlTxt genereerEmail(Lid lid) throws EmailException {
+        Configuration conf = Play.application().configuration();
+        String naamVereniging = conf.getString("ledenadmin.vereniging.naam");
+        String rekeningVereniging = conf.getString("ledenadmin.vereniging.bankrekening");
+        String naamPenningmeester = conf.getString("ledenadmin.vereniging.penningmeester.naam");
+        String emailPenningmeester = conf.getString("ledenadmin.vereniging.penningmeester.email");
+
+        StringBuilder jaren = new StringBuilder();
+        BigDecimal bedrag = new BigDecimal(0);
+        for(Factuur f: lid.contributieFacturen()) {
+            if (!f.isBetaald()) {
+              if (jaren.length()>0) jaren.append(", ");
+              jaren.append(Integer.toString(f.jaar));
+              bedrag = bedrag.add(f.bedrag);
+            }
+        }
+
+        if (jaren.length()==0) {
+            flash("error", "Geen achterstallige contributie voor lid " + lid.getFirstName() + " dus geen mail verstuurd");
+            return null;
+        }
+
+        // Create the email message
+        HtmlEmail email = new HtmlEmail();
+        email.setHostName(conf.getString("smtp.host"));
+        if (Play.isDev()) {
+            email.addTo("janpascal@vanbest.org", "Geadresseerde");
+        } else {
+            email.addTo(lid.personen.get(0).email, lid.getFirstName());
+        }
+        email.setFrom(emailPenningmeester, naamPenningmeester);
+        email.setSubject("Herinnering contributie");
+
+        String mainCssUrl = controllers.routes.Assets.at("stylesheets/main.css").absoluteURL(request());
+        String bootstrapCssUrl = controllers.routes.Assets.at("stylesheets/bootstrap.css").absoluteURL(request());
+        String mainCid = email.embed(mainCssUrl, "main.css");
+        String bootstrapCid = email.embed(bootstrapCssUrl, "bootstrap.css");
+
+        Logger.info("cssUrl: "+ mainCssUrl);
+
+        String txt = views.txt.email.contributieachterstand
+           .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
+           jaren.toString(), bedrag).toString();
+        String html = views.html.email.contributieachterstand
+           .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
+           jaren.toString(), bedrag).toString();
+
+      email.setHtmlMsg(html);
+      email.setTextMsg(txt);
+
+      HtmlTxt result = new HtmlTxt();
+      result.html = html;
+      result.txt = txt;
+      result.email = email;
+      return result;
+    }
+
+    public static Result toonHerinnering(Long lidid) throws EmailException {
+        Lid lid = Lid.find.byId(lidid);
+
+        HtmlTxt email = genereerEmail(lid);
+        if (email==null) return redirect(routes.Leden.bewerkLid(lidid));
+
+        return ok(toonherinnering.render(lid, email.email, email.html));
+    }
+
+
+    public static Result verstuurHerinnering(Long lidid) throws EmailException {
+        Lid lid = Lid.find.byId(lidid);
+
+        HtmlTxt email = genereerEmail(lid);
+        if (email==null) return redirect(routes.Leden.bewerkLid(lidid));
+
+      // send the email
+      email.email.send();
+
+        flash("success", "Contributieherinnering voor " + lid.getFirstName() + " verstuurd.");
+        return redirect(routes.Leden.bewerkLid(lidid));
     }
 
     public static Result csvimport() {

@@ -3,20 +3,20 @@
 @import helper._
 
 @persoonField(field: Field, className: String = "persoon") = {
-    <fieldset class="@className">
+    <div class="@className">
         <legend>Personalia @field("name").value</legend>
-        @helper.input(field("name"), '_label -> "Naam") { (id, name, value, _) =>
+        @helper.input(field("name"), '_label -> "Naam", '_showConstraints -> false) { (id, name, value, _) =>
             <input type="text" name="@name" value="@value" class="persoonsnaam"> 
             <a class="removePersoon btn danger">Verwijder persoon</a>
         }
-        @helper.input(field("email"), '_label -> "E-mail") { (id, name, value, _) =>
+        @helper.input(field("email"), '_label -> "E-mail", '_showConstraints -> false) { (id, name, value, _) =>
             <input type="text" name="@name" value="@value" class="persoonsemail"> 
         }
-    </fieldset>
+    </div>
 }
 
 @bankrekeningField(field: Field, className: String = "bankrekening") = {
-    @helper.input(field, '_label -> "Bankrekening", '_class -> className) { (id, name, value, _) =>
+    @helper.input(field, '_label -> "Bankrekening", '_class -> className, '_showConstraints -> false) { (id, name, value, _) =>
         <input type="text" name="@name" value="@value"> 
         <a class="removeRekening btn danger">Verwijder</a>
     }
@@ -27,6 +27,7 @@
         @helper.form(action = routes.Probes.sendProbe(id)) {
             <input type="submit" value="Stuur emailverificatiemail" class="btn success">
         }
+
     @helper.form(action = routes.Leden.saveLid(id), 'id -> "form") {
     <fieldset class="fieldset">
         <legend>Lid @id</legend>
@@ -49,9 +50,9 @@
     
         @helper.inputText(myForm("address"), '_label -> "Adres") 
 
-        @helper.inputDate(myForm("lidSinds"), '_label -> "Lid sinds")
+        @helper.inputDate(myForm("lidSinds"), '_label -> "Lid sinds", '_showConstraints -> false)
 
-        @helper.inputDate(myForm("lidTot"), '_label -> "Lid tot")
+        @helper.inputDate(myForm("lidTot"), '_label -> "Lid tot", '_showConstraints -> false)
 
         @helper.repeat(myForm("bankrekeningen"), min = 1) { bankrekening =>
                 @bankrekeningField(bankrekening("nummer"))
@@ -118,6 +119,9 @@
         </tr>
       }
     </table>
+
+    <a class="btn success" href="@routes.Leden.toonHerinnering(id)">Stuur
+    contributie-achterstandsmail</a>
 
    <script type="text/javascript" charset="utf-8">
         $(function() {

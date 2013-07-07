@@ -127,6 +127,7 @@ public class Leden extends Controller {
         } else {
             email.addTo(lid.personen.get(0).email, lid.getFirstName());
         }
+        email.addCc(emailPenningmeester, naamPenningmeester);
         email.setFrom(emailPenningmeester, naamPenningmeester);
         email.setSubject("Herinnering contributie");
 

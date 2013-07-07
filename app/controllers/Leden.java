@@ -123,7 +123,9 @@ public class Leden extends Controller {
             email.addTo("janpascal@vanbest.org", "Geadresseerde");
         } else {
             for(Persoon p: lid.personen) {
-                email.addTo(p.email, p.name);
+                if (p.name != null && p.email!=null) {
+                    email.addTo(p.email, p.name);
+                }
             }
         }
         email.addCc(emailPenningmeester, naamPenningmeester);

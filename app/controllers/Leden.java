@@ -134,7 +134,6 @@ public class Leden extends Controller {
         }
         email.addCc(emailPenningmeester, naamPenningmeester);
         email.setFrom(emailPenningmeester, naamPenningmeester);
-        email.setSubject("Herinnering contributie");
 
         String mainCssUrl = controllers.routes.Assets.at("stylesheets/main.css").absoluteURL(request());
         String bootstrapCssUrl = controllers.routes.Assets.at("stylesheets/bootstrap.min.css").absoluteURL(request());
@@ -152,11 +151,13 @@ public class Leden extends Controller {
             html = views.html.email.contributieachterstand
                .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester,
                jaren.toString(), bedrag).toString();
+            email.setSubject("Herinnering contributie");
         } else {
             txt = views.txt.email.contributieoverzicht
                .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester).toString();
             html = views.html.email.contributieoverzicht
                .render(lid, mainCid, bootstrapCid, rekeningVereniging, naamVereniging, naamPenningmeester).toString();
+            email.setSubject("Overzicht contributiebetalingen - u bent bij!");
         }
 
       email.setHtmlMsg(html);

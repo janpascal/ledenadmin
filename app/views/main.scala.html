@@ -30,14 +30,14 @@
 
         <div id="main" class="container-fluid">
             @if(flash.containsKey("error")) {
-                <div class="alert-message error">
+                <div class="alert-error">
                     <p>
                         <strong>Oops!</strong> @flash.get("error")
                     </p>
                 </div>
             } 
             @if(flash.containsKey("success")) {
-                <div class="alert-message warning">
+                <div class="alert-success">
                     <strong>Done!</strong> @flash.get("success")
                 </div>
             }

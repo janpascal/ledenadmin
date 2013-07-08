@@ -2,7 +2,7 @@
 
 @main("Betaalstatus") {
     <h1>Betaalstatus</h1>
-    <table> 
+    <table class="table table-striped"> 
     <tr>
     <th></th>
     <th>lidnr</th>
@@ -14,9 +14,9 @@
     </tr>
 	@for(lid <- leden) {
           <tr>
-              <td><a class="btn success" href="@routes.Leden.toonHerinnering(lid.id)">Mail</a></td>
+              <td><a class="btn btn-info" href="@routes.Leden.toonHerinnering(lid.id)">Mail</a></td>
 			  <td>@lid.id</td>
-			  <td>@lid.getFirstName()</td>
+			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.getFirstName()</a></td>
 			  <td>@lid.address</td>
    		      @for(jaar <- jaren) {
 			   	<td>

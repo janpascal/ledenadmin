@@ -8,7 +8,7 @@
     <h1>Bewerk factuur</h1>
 
     @helper.form(action = routes.Facturen.deleteInvoice(id)) {
-        <input type="submit" value="Verwijder deze factuur" class="btn danger">
+        <input type="submit" value="Verwijder deze factuur" class="btn btn-danger">
     }
 
     @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
@@ -49,7 +49,7 @@
         </table>
 *@
         <div class="actions">
-            <input type="submit" value="Opslaan" class="btn primary"> of 
+            <input type="submit" value="Opslaan" class="btn btn-primary"> of 
             <a href="@routes.Facturen.lijst()" class="btn">Annuleren</a> 
         </div>
 

@@ -90,6 +90,7 @@ public class Facturen extends Controller {
       Logger.info("Betaling aantal facturen: "+betaling.betaaldeFacturen.size());
       Logger.info("Betaling bevat factuur: "+betaling.betaaldeFacturen.contains(factuur));
       factuur.save();
+      flash("success", "Betaling gewist");
       return redirect(routes.Facturen.toon(factuurId));
     }
 

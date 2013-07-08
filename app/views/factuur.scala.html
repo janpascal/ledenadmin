@@ -12,10 +12,10 @@
 @main("Factuur") {
     <h1>Factuur @factuur</h1>
 
-    <a href="@routes.Facturen.bewerkFactuur(id)" class="btn danger">Bewerk deze factuur</a>
+    <a href="@routes.Facturen.bewerkFactuur(id)" class="btn btn-danger">Bewerk deze factuur</a>
 
     @helper.form(action = routes.Facturen.saveFactuur(id), 'id -> "form") {
-        <table> 
+        <table class="table"> 
         <tr><td>omschrijving</td><td>@factuur</td></tr>
         <tr><td>datum</td><td>@factuur.datum.format("dd/MM/yyyy")</td></tr>
         <tr><td>lid</td><td>
@@ -34,18 +34,18 @@
         </table>
     }
     <h2>Mogelijke betalingen:</h2>
-    <table>
+    <table class="table table-striped">
       @for( afschrift <- factuur.possiblePayments() ) {
         <tr>
             <td>
               @if(factuur.betaling != null && afschrift.id == factuur.betaling.id) {
                 @helper.form(action = routes.Facturen.wisBetaling(factuur.id)) {
-                    <input type="submit" value="Wis" class="btn danger">
+                    <input type="submit" value="Wis" class="btn btn-danger">
                 }
               } else {
                 @if(!afschrift.isVerantwoord()) {
                   @helper.form(action = routes.Facturen.markeerBetaling(factuur.id,afschrift.id)) {
-                      <input type="submit" value="Selecteer" class="btn success">
+                      <input type="submit" value="Selecteer" class="btn btn-success">
                   }
                 }
               }
@@ -60,6 +60,5 @@
       }
     </table>
 
-    <a href="@routes.Facturen.lijst()" class="btn primary">Lijst facturen</a>
-
+    <a href="@routes.Facturen.lijst()" class="btn btn-primary">Lijst facturen</a>
 }

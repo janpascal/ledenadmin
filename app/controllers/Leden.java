@@ -137,7 +137,9 @@ public class Leden extends Controller {
         email.setSubject("Herinnering contributie");
 
         String mainCssUrl = controllers.routes.Assets.at("stylesheets/main.css").absoluteURL(request());
-        String bootstrapCssUrl = controllers.routes.Assets.at("stylesheets/bootstrap.css").absoluteURL(request());
+        String bootstrapCssUrl = controllers.routes.Assets.at("stylesheets/bootstrap.min.css").absoluteURL(request());
+        Logger.info("main css url: " + mainCssUrl);
+        Logger.info("bootstrap css url: " + bootstrapCssUrl);
         String mainCid = email.embed(mainCssUrl, "main.css");
         String bootstrapCid = email.embed(bootstrapCssUrl, "bootstrap.css");
 
@@ -183,11 +185,11 @@ public class Leden extends Controller {
         HtmlTxt email = genereerEmail(lid);
         if (email==null) return redirect(routes.Leden.bewerkLid(lidid));
 
-      // send the email
-      email.email.send();
+        // send the email
+        email.email.send();
 
-        flash("success", "Contributieherinnering voor " + lid.getFirstName() + " verstuurd.");
-        return redirect(routes.Leden.bewerkLid(lidid));
+        flash("success", "Contributieherinnering/overzicht voor " + lid.getFirstName() + " verstuurd.");
+        return redirect(routes.Leden.betaalStatus());
     }
 
     public static Result csvimport() {

@@ -2,7 +2,7 @@
     <h1>Importeer CSV betalingen</h1>
 
     @helper.form(action = routes.Afschriften.uploadBetalingen, 'enctype -> "multipart/form-data") {
-        <table>
+        <table class="table">
         <tr>
           <td>Bestandsnaam</td>
           <td><input type="file" name="bestand"></td>
@@ -13,7 +13,7 @@
         id="create"></td>
         </tr>
         <tr>
-        <td></td><td><input type="submit" class="btn primary"></td>
+        <td></td><td><input type="submit" class="btn btn-primary" value="Importeer"></td>
         </tr>
     }
 }

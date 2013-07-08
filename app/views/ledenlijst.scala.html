@@ -1,5 +1,4 @@
 @(leden: List[Lid])
-
 @persoontooltip(p:Persoon) = {
     @if(p.email==null || p.email.isEmpty) {
       Geen emailadres bekend
@@ -16,7 +15,7 @@
 }
 @main("Ledenlijst") {
     <h1>Ledenlijst</h1>
-    <table> 
+    <table class="table table-striped"> 
     <tr>
     <th>lidnr</th>
     <th>namen</th>
@@ -47,10 +46,10 @@
 	} 
     </table>
     
-    <a class="btn success" id="import"
+    <a class="btn btn-success" id="import"
     href="@routes.Leden.csvimport()">Importeer een CSV-ledenlijst</a>
 
-    <a class="btn success" id="nieuw"
+    <a class="btn btn-success" id="nieuw"
     href="@routes.Leden.nieuwLid()">Nieuw lid</a>
 
     <script>

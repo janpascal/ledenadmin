@@ -11,10 +11,11 @@
     <h1>Bankafschrift</h1>
     @if(!afschrift.isVerantwoord()) {
         @helper.form(action = routes.Afschriften.genereerFactuur(afschrift.id)) {
-            <input type="submit" value="Genereer factuur voor afschrift" class="btn success">
+            <input type="submit" value="Genereer factuur voor afschrift"
+            class="btn btn-success">
         }
     }
-    <table> 
+    <table class="table"> 
     <tr><td>datum</td><td>@afschrift.datum.format("dd/MM/yyyy")</td></tr>
     <tr><td>naam</td> <td>@afschrift.naam</td></tr>
     <tr><td>bedrag</td> <td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td></tr>
@@ -24,12 +25,12 @@
     </table>
     @if(!afschrift.betaaldeFacturen.isEmpty()) {
         <h2>Door dit afschrift betaalde facturen</h2>
-        <table>
+        <table class="table table-striped">
         @for(factuur <- afschrift.betaaldeFacturen) {
             <tr>@showInvoice(factuur)</tr>
         }
         </table>
     }
 
-    <a href="@routes.Afschriften.lijst()" class="btn primary">Lijst afschriften</a>
+    <a href="@routes.Afschriften.lijst()" class="btn btn-primary">Lijst afschriften</a>
 }

@@ -55,7 +55,7 @@ currentVerantwoordFilter: String)
             <option value="ja" @if(currentVerantwoordFilter=="ja"){ selected="yes" }>verantwoord</option>
             <option value="nee" @if(currentVerantwoordFilter=="nee"){ selected="yes" }>niet verantwoord</option>
             </select>
-            <input type="submit" id="searchsubmit" value="Filter" class="btn primary">
+            <input type="submit" id="searchsubmit" value="Filter" class="btn btn-primary">
         </form>
         
     </div>
@@ -68,7 +68,7 @@ currentVerantwoordFilter: String)
         
     } else {
        
-        <table class="zebra-striped">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     @header("datum", "Datum")
@@ -78,6 +78,7 @@ currentVerantwoordFilter: String)
                     @header(null, "Tegenrekening")
                     @header(null, "Mededelingen")
                     @header(null, "Verantwoord")
+                    @header(null, "")
                     @header(null, "Betaling voor")
                 </tr>
             </thead>
@@ -96,7 +97,11 @@ currentVerantwoordFilter: String)
                                 @afschrift.datum.format("dd/MM/yyyy")
                             }
                         </a></td>
-                        <td>@afschrift.naam</td>
+                        <td>@defining(Lid.findLid(afschrift.naam,afschrift.tegenrekening)) { lid => 
+                          @if(lid!=null){<a href="@routes.Leden.bewerkLid(lid.id)">}
+                          @afschrift.naam
+                          @if(lid!=null){</a>}
+                        }</td>
 			<td>@utils.FormatHelper.formatCurrency(afschrift.bedrag, "0.00")</td>
 			  <td>@afschrift.afbij</td>
                         <td>@afschrift.tegenrekening</td>
@@ -104,10 +109,16 @@ currentVerantwoordFilter: String)
 			  <td>@if(afschrift.isVerantwoord()) {
                             ja
                             } else {
-                              nee }</td>
+                              nee 
+                            }</td>
+			  <td>@if(!afschrift.isVerantwoord()) {
+                              <form action="@routes.Afschriften.genereerFactuur(afschrift.id)" method="post">
+                                  <input type="submit" value="Maak" class="btn btn-success">
+                              </form>
+                            }</td>
 			  <td>
                               @for(factuur <- afschrift.betaaldeFacturen) {
-                                  @factuur
+                                  <a href="@routes.Facturen.toon(factuur.id)">@factuur</a>
                               }
                           </td>
                     </tr>
@@ -176,7 +187,7 @@ currentVerantwoordFilter: String)
 	} 
     </table>
   *@  
-    <a class="btn success" id="import"
+    <a class="btn btn-success" id="import"
     href="@routes.Afschriften.csvimport()">Importeer een CSV
     bankafschriftendownloadbestand</a>
 }

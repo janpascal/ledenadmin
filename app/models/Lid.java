@@ -150,6 +150,19 @@ public class Lid extends Model {
                   .findList();
         return facturen;
     }
+
+    public static Lid findLid(String name, String bankrekening) {
+        if (bankrekening!=null && !bankrekening.isEmpty()) {
+            Lid lid = Lid.find.where()
+                .eq("bankrekeningen.nummer", bankrekening)
+                .findUnique();
+            if (lid != null) return lid;
+        }
+
+        return Lid.find.where()
+            .icontains("personen.name", name)
+            .findUnique();
+    }
     
     public static void create(Lid lid) {
         lid.save();

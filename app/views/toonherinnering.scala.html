@@ -4,9 +4,6 @@
 
 @main("Stuur herinneringsmail") {
 
-<br>
-<br>
-<br>
 <p>
 Verstuur de volgende mail aan 
 @for(address <- email.getToAddresses()) {
@@ -19,10 +16,10 @@ Verstuur de volgende mail aan
 @Html(html)
 </blockquote>
 
-@helper.form(action = routes.Leden.verstuurHerinnering(lid.id)) {
-    <input type="submit" value="Verstuur mail" class="btn success">
-    of
-    <a href="@routes.Leden.lijst()">Annuleren</a>
-}
+    @helper.form(action = routes.Leden.verstuurHerinnering(lid.id)) {
+        <input type="submit" value="Verstuur mail" class="btn btn-success">
+        of
+        <a href="@routes.Leden.lijst()">Annuleren</a>
+    }
 
 }

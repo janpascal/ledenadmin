@@ -7,7 +7,7 @@
         <legend>Personalia @field("name").value</legend>
         @helper.input(field("name"), '_label -> "Naam", '_showConstraints -> false) { (id, name, value, _) =>
             <input type="text" name="@name" value="@value" class="persoonsnaam"> 
-            <a class="removePersoon btn danger">Verwijder persoon</a>
+            <a class="removePersoon btn btn-danger">Verwijder persoon</a>
         }
         @helper.input(field("email"), '_label -> "E-mail", '_showConstraints -> false) { (id, name, value, _) =>
             <input type="text" name="@name" value="@value" class="persoonsemail"> 
@@ -18,14 +18,14 @@
 @bankrekeningField(field: Field, className: String = "bankrekening") = {
     @helper.input(field, '_label -> "Bankrekening", '_class -> className, '_showConstraints -> false) { (id, name, value, _) =>
         <input type="text" name="@name" value="@value"> 
-        <a class="removeRekening btn danger">Verwijder</a>
+        <a class="removeRekening btn btn-danger">Verwijder</a>
     }
 }
 
 @main("Bewerk lid") {
     <h1>Bewerk lid</h1>
         @helper.form(action = routes.Probes.sendProbe(id)) {
-            <input type="submit" value="Stuur emailverificatiemail" class="btn success">
+            <input type="submit" value="Stuur emailverificatiemail" class="btn btn-success">
         }
 
     @helper.form(action = routes.Leden.saveLid(id), 'id -> "form") {
@@ -44,7 +44,7 @@
         
         <div class="clearfix">
             <div class="input">
-                <a class="addPersoon btn success">Naam toevoegen</a>
+                <a class="addPersoon btn btn-success">Naam toevoegen</a>
             </div>
         </div>
     
@@ -66,13 +66,13 @@
         
         <div class="clearfix">
             <div class="input">
-                <a class="addRekening btn success">Bankrekening toevoegen</a>
+                <a class="addRekening btn btn-success">Bankrekening toevoegen</a>
             </div>
         </div>
     </fieldset>
 
     <div class="actions">
-        <input type="submit" value="Opslaan" class="btn primary"> of 
+        <input type="submit" value="Opslaan" class="btn btn-primary"> of 
         <a href="@routes.Leden.lijst()" class="btn">Annuleren</a> 
     </div>
 
@@ -80,7 +80,7 @@
 
    <h2>Facturen</h2>
 
-   <table>
+   <table class="table table-striped">
        <tr>
            <th>Datum</th>
            <th>Factuur</th>
@@ -120,7 +120,7 @@
       }
     </table>
 
-    <a class="btn success" href="@routes.Leden.toonHerinnering(id)">Stuur
+    <a class="btn btn-success" href="@routes.Leden.toonHerinnering(id)">Stuur
     contributie-achterstandsmail</a>
 
    <script type="text/javascript" charset="utf-8">

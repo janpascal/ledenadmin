@@ -28,7 +28,6 @@ public class EmailCheckProbe extends Model {
     public Long id;
 
     @ManyToOne
-    @javax.persistence.OrderBy("id ASC")
     public Persoon persoon;
     
     @Formats.DateTime(pattern="dd/MM/yyyy")
@@ -37,7 +36,7 @@ public class EmailCheckProbe extends Model {
     public String token;
     public ProbeType type;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="probe", orphanRemoval = true)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="probe")
     @javax.persistence.OrderBy("id ASC")
     public List<ProbeResponse> responses;
 

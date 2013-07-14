@@ -4,6 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET     /login                      controllers.Application.login()
+POST    /login                      controllers.Application.authenticate()
 
 GET     /leden/lijst                controllers.Leden.lijst()
 GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)

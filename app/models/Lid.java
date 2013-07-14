@@ -20,7 +20,7 @@ public class Lid extends Model {
     @Id
     public Long id;
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid", orphanRemoval = true)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="lid")
     @PrivateOwned
     @javax.persistence.OrderBy("id ASC")
     public List<Persoon> personen;
@@ -171,6 +171,18 @@ public class Lid extends Model {
     public static void delete(Long id) {
        find.ref(id).delete();
     }
+/*
+    @Override
+    public void update() {
+      for(Persoon p: personen) {
+        p.update();
+      }
+      for(Bankrekening r: bankrekeningen) {
+        r.update();
+      }
+      super.update();
+    }
+*/
      
     public static Finder<Long,Lid> find = new Finder<Long, Lid>(
             Long.class, Lid.class

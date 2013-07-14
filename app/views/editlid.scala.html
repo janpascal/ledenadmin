@@ -2,6 +2,20 @@
 
 @import helper._
 
+@**
+ * Generate an HTML hidden field. *
+ * Example:
+ * {{{ 
+ * @fieldHidden(field = myForm("name")) 
+ * }}} 
+ * 
+ * @param field The form field. 
+ * @param args Set of extra attributes. 
+ *@ 
+@*
+ @fieldHidden(field: play.api.data.Field, args: (Symbol,Any)*) @id = @{ args.toMap.get('id).map(_.toString).getOrElse(field.id) } 
+*@
+
 @persoonField(field: Field, className: String = "persoon") = {
     <div class="@className">
         <legend>Personalia @field("name").value</legend>
@@ -12,6 +26,9 @@
         @helper.input(field("email"), '_label -> "E-mail", '_showConstraints -> false) { (id, name, value, _) =>
             <input type="text" name="@name" value="@value" class="persoonsemail"> 
         }
+        <input type="hidden" name="@field("accountName").name" value="@field("accountName").value" class="persoonsaccountname"> 
+        <input type="hidden" name="@field("cryptedPassword").name" value="@field("cryptedPassword").value" class="persoonspassword"> 
+        <input type="hidden" name="@field("id").name" value="@field("id").value" class="persoonsid"> 
     </div>
 }
 
@@ -158,20 +175,21 @@
 
 
         // Rename fields to have a coherent payload like:
-        //
-        // informations[0].label
-        // informations[0].email
-        // informations[0].phones[0]
-        // informations[0].phones[1]
-        // ...
-        //
-        // This is probably not the easiest way to do it. A jQuery plugin would help.
-        
+        // FIXME DRY violation alert 
         var renumber = function() {
             $('.persoonsnaam').each(function(i) {
                 $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
             })
             $('.persoonsemail').each(function(i) {
+                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
+            })
+            $('.persoonsaccountname').each(function(i) {
+                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
+            })
+            $('.persoonspassword').each(function(i) {
+                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
+            })
+            $('.persoonsid').each(function(i) {
                 $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
             })
             $('.bankrekening input').each(function(i) {

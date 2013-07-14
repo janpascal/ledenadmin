@@ -52,7 +52,12 @@ public class Leden extends Controller {
     }
     
     public static Result saveLid(Long id) {
-        Form<Lid> myForm = form(Lid.class).bindFromRequest();
+        Form<Lid> myForm;
+        if (id>0) {
+          myForm = form(Lid.class).fill(Lid.find.byId(id)).bindFromRequest();
+        } else {
+          myForm = form(Lid.class).bindFromRequest();
+        }
         if(myForm.hasErrors()) {
             return badRequest(editlid.render(id,myForm));
         }
@@ -60,6 +65,8 @@ public class Leden extends Controller {
         // Workaround for bug in Ebean: if all 'personen' or
         // 'bankrekeningen' are removed, they are not
         // removed from the database
+        Lid oldLid = Lid.find.byId(id);
+       /* 
         if(id>=0) {
             Lid oldLid = Lid.find.byId(id);
             for(Persoon p: oldLid.personen) {
@@ -69,8 +76,26 @@ public class Leden extends Controller {
               b.delete();
             }
         }
+        */
         Lid lid = myForm.get();
+        lid.id = id;
         if(id>=0) {
+            for(Persoon p: oldLid.personen) {
+              for (EmailCheckProbe probe: p.probes) {
+                for (ProbeResponse response: probe.responses) {
+                  response.update();
+                }
+                probe.update();
+              }
+              p.update();
+            }
+            for(Bankrekening b: oldLid.bankrekeningen) {
+              b.update();
+            }
+            Logger.debug("Lid.id was "+lid.id+" while form id="+id);
+            //lid.refresh();
+            lid.id=id;
+            Logger.debug("Updateing lid");
             lid.update(id);
         } else {
           lid.save();

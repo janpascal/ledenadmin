@@ -1,4 +1,4 @@
-@(id: Long, myForm: Form[Application.AccountSettings])
+@(id: Long, myForm: Form[Application.AccountSettings], persoon: Persoon)
 
 @import helper._
 
@@ -32,6 +32,8 @@
                     @myForm.globalError.message
                 </p>
             }
+
+    <p>Betrokken persoon: @persoon.name (@persoon.email)</p>
 
     @helper.form(action = routes.Application.saveAccount(id), 'id -> "form") {
         <fieldset>

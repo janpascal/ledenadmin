@@ -125,7 +125,7 @@ public class Application extends Controller {
             for(Role role: subject.getRoles()) {
                 settings.roles.put(role.getName(), "yes");
             }
-            return ok(editaccount.render(id, form(AccountSettings.class).fill(settings)));
+            return ok(editaccount.render(id, form(AccountSettings.class).fill(settings), subject));
         } else {
             flash("error", "Niet toegestane actie");
             return forbidden();
@@ -150,7 +150,7 @@ public class Application extends Controller {
            getCurrentAccount().hasRole(Persoon.ADMIN_ROLE)) {
             Form<AccountSettings> settingsForm = form(AccountSettings.class).bindFromRequest();
             if(settingsForm.hasErrors()) {
-                return badRequest(editaccount.render(id,settingsForm));
+                return badRequest(editaccount.render(id,settingsForm, subject));
             } else {
                 AccountSettings settings = settingsForm.get();
                 // Change account name?
@@ -163,7 +163,7 @@ public class Application extends Controller {
                         subject.accountName = settings.account;
                     } else {
                         flash("error", "Account naam al in gebruik");
-                        return badRequest(editaccount.render(id,settingsForm));
+                        return badRequest(editaccount.render(id,settingsForm,subject));
                     }
                 }
                 // Change password?

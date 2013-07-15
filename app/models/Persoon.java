@@ -193,6 +193,15 @@ public class Persoon extends Model implements Subject {
         return false;
     }
 
+    public boolean hasAnyRole(String... neededRoles) {
+        for(SecurityRole r: roles) {
+            for(String n: neededRoles) {
+                if(r.getName().equals(n)) return true;
+            }
+        } 
+        return false;
+    }
+
     public void addRole(String role) {
         SecurityRole r = SecurityRole.findByName(role);
         if (r!=null) {

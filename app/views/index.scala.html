@@ -1,22 +1,51 @@
-@(message: String)
+@(verenigingsNaam:String)
 
+@hasRole(role: String) = @{
+  defining(controllers.Application.getCurrentAccount()) { account =>
+    account.hasRole(role)
+  }
+}
+@*
+@if(hasRole("admin")) {
+admin role
+}
+@if(hasRole("lid")) {
+lid role
+}
+*@
 @main("Ledenadministratie") {
-    
-<h2>Algemeen</h2>
-<ul> 
-<li><a href="@routes.Leden.lijst">Ledenlijst</a></li>
-<li><a href="@routes.Leden.betaalStatus">Betaalstatus</a></li>
-<li><a href="@routes.Afschriften.lijst()">Lijst afschriften</a></li>
-<li><a href="@routes.Afschriften.csvimport()">Importeer CSV bankafschrift</a></li>
-<li><a href="@routes.Afschriften.csvBetalingenImport()">Importeer lijst betalingen</a></li>
-<li><a href="@routes.Facturen.lijst()">Lijst facturen t.b.v. contributie</a></li>
-</ul>
 
-<h2>Beheer</h2>
-<ul>
-<li><a href="@routes.Leden.csvimport">Importeer ledenlijst</a></li>
-<li><a href="@routes.Afschriften.csvimport()">Importeer CSV bankafschrift</a></li>
-<li><a href="@routes.Afschriften.csvBetalingenImport()">Importeer lijst betalingen</a></li>
-<li><a href="@routes.Facturen.newInvoicesForm()">Genereer nieuwe contributiefacturen</a></li>
-</ul>
+<h1>Ledenadministratie</h1>
+<p>
+Dit is de website van de vereniging "@verenigingsNaam".
+</p>
+
+<p>
+Voor leden is alleen de ledenlijst beschikbaar. Voor het bestuur en de
+penningmeester zijn er meerdere mogelijkheden.
+</p>
+
+<p>
+Ga naar de <a href="@routes.Leden.lijst">Ledenlijst</a>.
+</p>
+
+@if(Application.currentRole("bestuur")){
+    <h2>Algemeen</h2>
+    <ul> 
+    <li><a href="@routes.Leden.lijst">Ledenlijst</a></li>
+    <li><a href="@routes.Leden.betaalStatus">Betaalstatus</a></li>
+    <li><a href="@routes.Afschriften.lijst()">Lijst afschriften</a></li>
+    <li><a href="@routes.Afschriften.csvimport()">Importeer CSV bankafschrift</a></li>
+    <li><a href="@routes.Afschriften.csvBetalingenImport()">Importeer lijst betalingen</a></li>
+    <li><a href="@routes.Facturen.lijst()">Lijst facturen t.b.v. contributie</a></li>
+    </ul>
+
+    <h2>Beheer</h2>
+    <ul>
+    <li><a href="@routes.Leden.csvimport">Importeer ledenlijst</a></li>
+    <li><a href="@routes.Afschriften.csvimport()">Importeer CSV bankafschrift</a></li>
+    <li><a href="@routes.Afschriften.csvBetalingenImport()">Importeer lijst betalingen</a></li>
+    <li><a href="@routes.Facturen.newInvoicesForm()">Genereer nieuwe contributiefacturen</a></li>
+    </ul>
+}
 }

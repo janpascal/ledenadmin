@@ -22,7 +22,9 @@ public class Application extends Controller {
 
 @Restrict({@Group(Persoon.LID_ROLE)})
     public static Result index() {
-        return ok(index.render("Ledenadministratie"));
+        Configuration conf = Play.application().configuration();
+        String naamVereniging = conf.getString("ledenadmin.vereniging.naam");
+        return ok(index.render(naamVereniging));
     }
 
    // -- Authentication
@@ -187,5 +189,14 @@ public class Application extends Controller {
 
     public static Persoon getCurrentAccount() {
         return Persoon.findByAccountName(session("account"));
+    }
+
+    public static boolean currentRole(String role) {
+        Persoon account = getCurrentAccount();
+        return account!=null && account.hasRole(role);
+    }
+
+    public static String currentAccount() {
+        return session("account");
     }
 }

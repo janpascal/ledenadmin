@@ -24,19 +24,20 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
 
+import be.objectify.deadbolt.java.actions.Restrict;
+import be.objectify.deadbolt.java.actions.Group;
+
 import views.html.*;
 
 public class Leden extends Controller {
   
-    public static Result index() {
-        return ok(index.render("Your new application is ready."));
-    }
-    
+    @Restrict({@Group(Persoon.LID_ROLE)})
     public static Result lijst() {
         List<Lid> leden = Lid.find.all();
         return ok(ledenlijst.render(leden));
     }
     
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result bewerkLid(Long id) {
         Form<Lid> myForm = form(Lid.class).fill(Lid.find.byId(id));
         Lid lid = Lid.find.byId(id);
@@ -44,6 +45,7 @@ public class Leden extends Controller {
         return ok(editlid.render(id, myForm));
     }
     
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result nieuwLid() {
         Lid lid = new Lid();
         Form<Lid> myForm = form(Lid.class).fill(lid);
@@ -51,6 +53,7 @@ public class Leden extends Controller {
         return ok(editlid.render(-1L, myForm));
     }
     
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result saveLid(Long id) {
         Form<Lid> myForm;
         if (id>0) {
@@ -110,6 +113,7 @@ public class Leden extends Controller {
         return redirect(routes.Leden.lijst());
     }
     
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result betaalStatus() {
         List<Lid> leden = Lid.find.all(); 
         List<Integer> jaren = Factuur.jarenMetContributieFacturen();
@@ -195,6 +199,7 @@ public class Leden extends Controller {
       return result;
     }
 
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result toonHerinnering(Long lidid) throws EmailException {
         Lid lid = Lid.find.byId(lidid);
 
@@ -205,6 +210,7 @@ public class Leden extends Controller {
     }
 
 
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result verstuurHerinnering(Long lidid) throws EmailException {
         Lid lid = Lid.find.byId(lidid);
 
@@ -218,10 +224,12 @@ public class Leden extends Controller {
         return redirect(routes.Leden.betaalStatus());
     }
 
+    @Restrict({@Group(Persoon.ADMIN_ROLE)})
     public static Result csvimport() {
         return ok(csvimport.render());
     }
     
+    @Restrict({@Group(Persoon.ADMIN_ROLE)})
     public static Result upload() {
         RequestBody mainbody = request().body();
         MultipartFormData body = mainbody.asMultipartFormData();

@@ -23,8 +23,12 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
 
+import be.objectify.deadbolt.java.actions.Restrict;
+import be.objectify.deadbolt.java.actions.Group;
+
 import views.html.*;
 
+@Restrict({@Group(Persoon.LID_ROLE)})
 public class Probes extends Controller {
   
     public static Result index() {

@@ -1,5 +1,9 @@
 @(title: String)(content: Html)
+@import be.objectify.deadbolt.java.views.html._
+@import be.objectify.deadbolt.core.utils.TemplateUtils._
 <!DOCTYPE html>
+
+@defining(controllers.Application.getCurrentAccount()) { account =>
 
 <html>
     <head>
@@ -10,6 +14,7 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/jquery-ui-1.10.3.custom.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
     </head>
     <body>
       <div class="navbar navbar-inverse navbar-fixed-top">
@@ -22,6 +27,21 @@
                 <li><a href="@routes.Leden.betaalStatus">Betaalstatus</a></li>
                 <li><a href="@routes.Afschriften.lijst()">Afschriften</a></li>
                 <li><a href="@routes.Facturen.lijst()">Facturen</a></li>
+              </ul>
+              <ul class="nav pull-right">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    @if(account==null){Logged out}else{@account.accountName}<b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    @subjectPresent(){
+                        <li><a href="@routes.Application.accountSettings(account.id)">Account settings</a></li>
+                        <li><a href="@routes.Application.logout()">Logout</a></li>
+                    }
+                    @subjectNotPresent(){
+                        <li><a href="@routes.Application.login()">Login</a></li>
+                    }
+                  </ul>
+                </li>
               </ul>
             </div>
           </div>
@@ -46,3 +66,4 @@
         </div>
     </body>
 </html>
+}

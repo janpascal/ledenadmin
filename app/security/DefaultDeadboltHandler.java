@@ -21,6 +21,8 @@ import be.objectify.deadbolt.core.models.Subject;
 import models.Persoon;
 import play.mvc.Http;
 import play.mvc.Result;
+import views.html.*;
+import controllers.*; // needed for routes
 
 //import views.html.accessFailed;
 
@@ -38,7 +40,6 @@ public class DefaultDeadboltHandler extends AbstractDeadboltHandler
 
     public Subject getSubject(Http.Context context)
     {
-        // in a real application, the user name would probably be in the session following a login process
         return Persoon.findByAccountName(context.session().get("account"));
     }
 
@@ -53,8 +54,10 @@ public class DefaultDeadboltHandler extends AbstractDeadboltHandler
                                 String content)
     {
         // you can return any result from here - forbidden, etc
-        return TODO;
+        //return TODO;
         //return ok(accessFailed.render());
+        context.flash().put("error", "Access denied " + content);
+        return redirect(routes.Application.login());
     }
 }
 

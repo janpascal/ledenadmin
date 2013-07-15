@@ -21,6 +21,10 @@ public class SecurityRole extends Model implements Role {
     @Constraints.Required
     public String name;
 
+    public SecurityRole(String name) {
+      this.name = name;
+    }
+
     public static final Finder<Long, SecurityRole> find = 
                 new Finder<Long, SecurityRole>(Long.class, SecurityRole.class);
 

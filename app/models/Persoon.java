@@ -28,6 +28,8 @@ public class Persoon extends Model implements Subject {
     public final static String ADMIN_ROLE="admin";
     public final static String PENNINGMEESTER_ROLE="penningmeester";
 
+    private final static String[] ALL_ROLES = {LID_ROLE, BESTUUR_ROLE, ADMIN_ROLE, PENNINGMEESTER_ROLE};
+
     @GeneratedValue(strategy=GenerationType.AUTO, generator="persoon_seq_gen")
     @SequenceGenerator(name="persoon_seq_gen", sequenceName="PERSOON_SEQ")
     @Id
@@ -144,6 +146,7 @@ public class Persoon extends Model implements Subject {
 
     public static boolean verifyPassword(String encrypted, String plain) throws Exception {
         String[] parts = encrypted.split("::");
+        if(parts.length!=3) return false;
         String version = parts[0];
         String salt = parts[1];
         String hash = parts[2];
@@ -151,10 +154,14 @@ public class Persoon extends Model implements Subject {
         return hash.equals(encrypt(salt+plain)); 
     }
 
+    public void setPassword(String plainPassword) throws Exception {
+        this.cryptedPassword = encryptPassword(plainPassword);
+    }
+
     public static Persoon authenticate(String account, String plainPassword) throws Exception {
         Persoon p = findByAccountName(account);
         if (p==null) return null;
-        if (p.cryptedPassword==null) {
+        if (p.cryptedPassword==null || p.cryptedPassword.isEmpty()) {
           Logger.debug("No password set, hash would be " + encryptPassword(plainPassword)); 
           return null;
         }
@@ -162,6 +169,41 @@ public class Persoon extends Model implements Subject {
            return p;
         } else {
           return null;
+        }
+    }
+    
+    public static List<String> allRoles() {
+        List<String> result = java.util.Arrays.asList(ALL_ROLES);
+        return result;
+    }
+
+    public static void seedSecurityRoles() {
+        for(String role: ALL_ROLES) {
+            if (SecurityRole.findByName(role)==null) {
+              SecurityRole r = new SecurityRole(role);
+              r.save();
+            }
+        }
+    }
+
+    public boolean hasRole(String role) {
+        for(SecurityRole r: roles) {
+            if(r.getName().equals(role)) return true;
+        } 
+        return false;
+    }
+
+    public void addRole(String role) {
+        SecurityRole r = SecurityRole.findByName(role);
+        if (r!=null) {
+            this.roles.add(r);
+        }
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = new ArrayList<SecurityRole>(roles.size());
+        for(String role: roles) {
+            addRole(role);
         }
     }
 

@@ -22,8 +22,12 @@ import play.libs.F.Function;
 import play.libs.*;
 import play.mvc.*;
 
+import be.objectify.deadbolt.java.actions.Restrict;
+import be.objectify.deadbolt.java.actions.Group;
+
 import views.html.*;
 
+@Restrict({@Group(Persoon.LID_ROLE)})
 public class Facturen extends Controller {
 
     public static Result list() {

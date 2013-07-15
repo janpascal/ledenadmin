@@ -1,0 +1,53 @@
+@(id: Long, myForm: Form[Application.AccountSettings])
+
+@import helper._
+
+@roleboxes = {
+        @defining(controllers.Application.getCurrentAccount()) { account =>
+        @defining(controllers.Application.allRoles()) { allRoles =>
+            @if(account.hasRole(Persoon.ADMIN_ROLE)){
+                <fieldset>
+                <legend>Gebruikersrollen</legend>
+                <table>
+                @for(role <- allRoles) {
+                    <tr>
+                    <td><input type="checkbox"
+                    name="roles[@role]" id="roles[@role]" value="@role" 
+                    @if(myForm("roles["+role+"]").value=="yes"){checked}
+                    ></td>
+                    <td>@role</td> 
+                    </tr>
+                }
+                </table>
+                </fieldset>
+            }
+        }}
+}
+
+@main("Account settings") {
+    <h1>Gebruikersinstellingen</h1>
+
+            @if(myForm.hasGlobalErrors) { 
+                <p class="error">
+                    @myForm.globalError.message
+                </p>
+            }
+
+    @helper.form(action = routes.Application.saveAccount(id), 'id -> "form") {
+        <fieldset>
+        @helper.inputText(myForm("account"), '_label -> "account") 
+
+        @helper.inputPassword(myForm("oldPassword"), '_label -> "Oud password")
+        @helper.inputPassword(myForm("newPassword"), '_label -> "Nieuw password")
+        @helper.inputPassword(myForm("verifyPassword"), '_label -> "Controleer password")
+
+        @roleboxes
+
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Opslaan" class="btn btn-primary"> of 
+            <a href="@routes.Leden.lijst()" class="btn">Annuleren</a> 
+        </div>
+    }
+}

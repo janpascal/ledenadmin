@@ -27,6 +27,8 @@ public class Global extends GlobalSettings {
     static class InitialData {
         
         public static void insert(Application app) {
+                System.out.println("Seeding security roles");
+                Persoon.seedSecurityRoles();
             if(Ebean.find(Lid.class).findRowCount() == 0) {
                 if(Play.isDev()) {
                     System.out.println("Seeding members");

@@ -6,6 +6,9 @@
 GET     /                           controllers.Application.index()
 GET     /login                      controllers.Application.login()
 POST    /login                      controllers.Application.authenticate()
+GET     /logout                     controllers.Application.logout()
+GET     /account/:id                controllers.Application.accountSettings(id: Long)
+POST    /account/:id                controllers.Application.saveAccount(id: Long)
 
 GET     /leden/lijst                controllers.Leden.lijst()
 GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)

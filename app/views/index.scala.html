@@ -1,18 +1,7 @@
 @(verenigingsNaam:String)
+@import be.objectify.deadbolt.java.views.html._
+@import be.objectify.deadbolt.core.utils.TemplateUtils._
 
-@hasRole(role: String) = @{
-  defining(controllers.Application.getCurrentAccount()) { account =>
-    account.hasRole(role)
-  }
-}
-@*
-@if(hasRole("admin")) {
-admin role
-}
-@if(hasRole("lid")) {
-lid role
-}
-*@
 @main("Ledenadministratie") {
 
 <h1>Ledenadministratie</h1>
@@ -29,7 +18,7 @@ penningmeester zijn er meerdere mogelijkheden.
 Ga naar de <a href="@routes.Leden.lijst">Ledenlijst</a>.
 </p>
 
-@if(Application.currentRole("bestuur")){
+@restrict(la(as("bestuur"))){
     <h2>Algemeen</h2>
     <ul> 
     <li><a href="@routes.Leden.lijst">Ledenlijst</a></li>
@@ -39,7 +28,8 @@ Ga naar de <a href="@routes.Leden.lijst">Ledenlijst</a>.
     <li><a href="@routes.Afschriften.csvBetalingenImport()">Importeer lijst betalingen</a></li>
     <li><a href="@routes.Facturen.lijst()">Lijst facturen t.b.v. contributie</a></li>
     </ul>
-
+}
+@restrict(la(as("admin"))){
     <h2>Beheer</h2>
     <ul>
     <li><a href="@routes.Leden.csvimport">Importeer ledenlijst</a></li>

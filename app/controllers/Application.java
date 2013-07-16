@@ -72,7 +72,7 @@ public class Application extends Controller {
     
     public static Result logout() {
         session("account", null);
-        return redirect(routes.Application.index());
+        return redirect(routes.Application.login());
     }
 
     public static class AccountSettings extends Model {
@@ -112,7 +112,7 @@ public class Application extends Controller {
         return Persoon.allRoles();
     }
 
-    @Restrict({@Group(Persoon.LID_ROLE)})
+    @Restrict({@Group(Persoon.LID_ROLE),@Group(Persoon.ADMIN_ROLE)})
     public static Result accountSettings(Long id) {
         // alleen toegestaan voor eigen account of
         // als admin
@@ -132,19 +132,10 @@ public class Application extends Controller {
         }
     }
 
-    @Restrict({@Group(Persoon.LID_ROLE)})
+    @Restrict({@Group(Persoon.LID_ROLE),@Group(Persoon.ADMIN_ROLE)})
     public static Result saveAccount(Long id) throws Exception {
         // alleen toegestaan voor eigen account of
         // als admin
-        java.util.Map<java.lang.String,java.lang.String[]> map = request().body().asFormUrlEncoded();
-        for(String k: map.keySet()) {
-          String[] v = map.get(k);
-          for(String s: v) {
-            Logger.debug(k+": "+s);
-          }
-        }
-        Logger.debug(request().uri());
-        Logger.debug(request().body().asText());
         Persoon subject = Persoon.find.byId(id);
         if(session("account").equals(subject.accountName) ||
            getCurrentAccount().hasRole(Persoon.ADMIN_ROLE)) {
@@ -172,12 +163,8 @@ public class Application extends Controller {
                 }
                 // Change security roles?
                 if(getCurrentAccount().hasRole(Persoon.ADMIN_ROLE)) {
-                    for(String k: settings.roles.keySet()) {
-                        Logger.debug("Role: " + k + ": " + settings.roles.get(k));
-                    }
                     subject.setRoles(settings.roles.keySet());
                 }
-                    
                 subject.update();
                 return redirect(routes.Leden.lijst());
             }
@@ -189,14 +176,5 @@ public class Application extends Controller {
 
     public static Persoon getCurrentAccount() {
         return Persoon.findByAccountName(session("account"));
-    }
-
-    public static boolean currentRole(String role) {
-        Persoon account = getCurrentAccount();
-        return account!=null && account.hasRole(role);
-    }
-
-    public static String currentAccount() {
-        return session("account");
     }
 }

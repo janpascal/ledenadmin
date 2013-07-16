@@ -13,6 +13,7 @@ import controllers.Leden;
 import controllers.Afschriften;
 
 import play.Application;
+import play.Configuration;
 import play.GlobalSettings;
 import play.Logger;
 import play.Play;
@@ -27,8 +28,14 @@ public class Global extends GlobalSettings {
     static class InitialData {
         
         public static void insert(Application app) {
-                System.out.println("Seeding security roles");
-                Persoon.seedSecurityRoles();
+            System.out.println("Seeding security roles");
+            Persoon.seedSecurityRoles();
+            if(Ebean.find(Persoon.class).findRowCount() == 0) {
+                Configuration conf = Play.application().configuration();
+                String initialAdminPassword = conf.getString("ledenadmin.admin.initialpassword", "admin");
+                Logger.info("Seeding admin user, password=\""+initialAdminPassword+"\"");
+                Persoon.seedAdmin(initialAdminPassword);
+            }
             if(Ebean.find(Lid.class).findRowCount() == 0) {
                 if(Play.isDev()) {
                     System.out.println("Seeding members");

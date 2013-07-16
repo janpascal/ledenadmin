@@ -66,6 +66,12 @@ public class Persoon extends Model implements Subject {
         this.email = email;
     }
 
+    public Persoon(String name, String accountName) {
+        this.name = name;
+        this.accountName = accountName;
+    }
+
+
     public Date emailLastVerified() {
       String sql = "select max(r.timestamp) as last "+
         "from email_check_probe p "+
@@ -86,16 +92,7 @@ public class Persoon extends Model implements Subject {
     public List<? extends Role> getRoles() {
       return roles;
     }
-/*
-      List<Role> result = new ArrayList<Role>();
-      result.add(new Role() {
-        public String getName() {
-            return Persoon.LID_ROLE;
-        }
-      });
-      return result;
-    }
-*/
+
     public List<? extends Permission> getPermissions() {
       return null;
     }
@@ -186,6 +183,17 @@ public class Persoon extends Model implements Subject {
         }
     }
 
+    public static void seedAdmin(String password) {
+        Persoon admin = new Persoon("admin", "admin");
+        try {
+            admin.setPassword(password);
+            admin.addRole(ADMIN_ROLE);
+            admin.save();
+        } catch (Exception e) {
+            Logger.error("Unable to create initial admin user", e);
+        }
+    }
+
     public boolean hasRole(String role) {
         for(SecurityRole r: roles) {
             if(r.getName().equals(role)) return true;
@@ -223,25 +231,7 @@ public class Persoon extends Model implements Subject {
     public static void delete(Long id) {
        find.ref(id).delete();
     }
-/*
-    @Override
-    public void update() {
-      for(EmailCheckProbe probe: probes) {
-        probe.update();
-      }
-      for(SecurityRole role: roles) {
-        role.update();
-      }
-      super.update();
-    }
 
-    @Override
-    public void delete() {
-       roles = new ArrayList<SecurityRole>();
-       super.save();
-       super.delete();
-    }
-  */   
     public static Finder<Long,Persoon> find = new Finder<Long, Persoon>(
             Long.class, Persoon.class
           );

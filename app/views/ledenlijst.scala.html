@@ -1,5 +1,8 @@
 @(leden: List[Lid])
 
+@import be.objectify.deadbolt.java.views.html._
+@import be.objectify.deadbolt.core.utils.TemplateUtils._
+
 @persoontooltip(p:Persoon) = {
     @if(p.email==null || p.email.isEmpty) {
       Geen emailadres bekend
@@ -27,10 +30,14 @@
     </tr>
 	@for(lid <- leden) {
           <tr>
-			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.id</a></td>
+			  <td>@restrictOr(la(as("bestuur"),as("admin"))){
+                              <a href="@routes.Leden.bewerkLid(lid.id)">@lid.id</a>
+                              }{@lid.id}</td>
 			  <td>
                           @for((p,i) <- lid.personen.zipWithIndex) {
-			      <span title="@persoontooltip(p)">@p.name</span>
+			      <span title="@persoontooltip(p)" class="pname">
+                              @p.name
+                              </span>
                               @if(i != lid.personen.size-1) { &mdash; }
                           }</td>
 			  <td>@lid.address</td>
@@ -54,8 +61,6 @@
     href="@routes.Leden.nieuwLid()">Nieuw lid</a>
 
     <script>
-        $(function() {
-            $( document ).tooltip();
-        });
+        $('.pname').tooltip()
      </script>
 }

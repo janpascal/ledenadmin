@@ -32,22 +32,6 @@
             </dd>
         </dl>
 
-@*
-        <table> 
-        <tr><td>lid</td><td>
-           @if(factuur.lid==null){
-             @factuur.betrokkene()
-           } else {
-             <a href="@routes.Leden.bewerkLid(factuur.lid.id)">@factuur.betrokkene()</a>
-           }</td></tr>
-        <tr><td>betaald</td>
-                              <td>@if(factuur.isBetaald()){
-                                Ja
-                              } else {
-                                Nee
-                              }</td></tr>
-        </table>
-*@
         <div class="actions">
             <input type="submit" value="Opslaan" class="btn btn-primary"> of 
             <a href="@routes.Facturen.lijst()" class="btn">Annuleren</a> 

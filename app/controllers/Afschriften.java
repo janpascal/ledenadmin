@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import akka.japi.Function;
 
@@ -30,17 +31,13 @@ import views.html.*;
 @Restrict({@Group(Persoon.LID_ROLE)})
 public class Afschriften extends Controller {
   
-/*    public static Result lijst() {
-        List<Afschrift> Afschriften = Afschrift.find.all();
-        return ok(afschriftenlijst.render(Afschriften));
-    }
-  */  
-    public static Result list() {
+    public static Result list() throws ParseException {
       return lijst(0, "datum", "asc", "", "", ""); 
     }
 
     public static Result lijst(int page, String sortBy, String order, 
-        String filter, String jaarFilter, String verantwoordFilter) {
+        String filter, String jaarFilter, String verantwoordFilter) throws
+        ParseException{
 
         int jaar;
         try {
@@ -50,12 +47,15 @@ public class Afschriften extends Controller {
         }
         Page<Afschrift> currentPage = Afschrift.page(page, 15, sortBy, order, filter, jaar, verantwoordFilter);
         //Logger.info("sortBy: " + sortBy);
-        return ok(
-            afschriftenlijst.render(
-                currentPage,
-                sortBy, order, filter, jaarFilter, verantwoordFilter
-            )
-        );
+        Configuration conf = Play.application().configuration();
+        BigDecimal startSaldo = new BigDecimal(conf.getString("ledenadmin.startsaldo.bedrag"));
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = dateFormatter.parse(conf.getString("ledenadmin.startsaldo.datum"));
+        BigDecimal saldo = startSaldo.add(Afschrift.saldo(startDate,new Date()));
+        return ok(afschriftenlijst.render(
+            currentPage, saldo,
+            sortBy, order, filter, jaarFilter, verantwoordFilter
+        ));
     }
 
     public static Result toon(Long id) {
@@ -142,7 +142,9 @@ public class Afschriften extends Controller {
     @com.avaje.ebean.annotation.Transactional
     public static void perform_INGimport(CSVReader reader) throws ParseException, NumberFormatException, IOException {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-        DecimalFormat currencyFormat = new DecimalFormat("0.00");
+        DecimalFormat currencyFormat = new DecimalFormat("0,00");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("nl","nl"));
+        currencyFormat.setDecimalFormatSymbols(symbols);
         currencyFormat.setParseBigDecimal(true);
         String[] nextLine;
         while ((nextLine = reader.readNext()) != null) {

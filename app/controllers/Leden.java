@@ -68,6 +68,7 @@ public class Leden extends Controller {
         // Workaround for bug in Ebean: if all 'personen' or
         // 'bankrekeningen' are removed, they are not
         // removed from the database
+        // 20130714 Not needed any more since Play 2.1.2
         Lid oldLid = Lid.find.byId(id);
        /* 
         if(id>=0) {
@@ -83,6 +84,7 @@ public class Leden extends Controller {
         Lid lid = myForm.get();
         lid.id = id;
         if(id>=0) {
+            /*
             for(Persoon p: oldLid.personen) {
               for (EmailCheckProbe probe: p.probes) {
                 for (ProbeResponse response: probe.responses) {
@@ -97,6 +99,7 @@ public class Leden extends Controller {
             }
             Logger.debug("Lid.id was "+lid.id+" while form id="+id);
             //lid.refresh();
+            */
             lid.id=id;
             Logger.debug("Updateing lid");
             lid.update(id);

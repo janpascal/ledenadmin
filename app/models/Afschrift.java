@@ -100,6 +100,26 @@ public class Afschrift extends Model {
       return som.equals(bedrag);
     }
 
+    // Saldo van alle afschriften van begindatum t/m einddatum 
+    public static BigDecimal saldo(Date begin, Date end) {
+      String sql = "select sum(bedrag) as sum from afschrift where afbij=:afbij "+
+         "and datum>:begin and datum<:end";
+      SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+      sqlQuery.setParameter("afbij", AfBij.AF);
+      sqlQuery.setParameter("begin", begin);
+      sqlQuery.setParameter("end", end);
+      SqlRow row = sqlQuery.findUnique();
+      BigDecimal af = row.getBigDecimal("sum");
+
+      sqlQuery.setParameter("afbij", AfBij.BIJ);
+      sqlQuery.setParameter("begin", begin);
+      sqlQuery.setParameter("end", end);
+      row = sqlQuery.findUnique();
+      BigDecimal bij = row.getBigDecimal("sum");
+
+      return bij.subtract(af);
+    }
+
     public static void create(Afschrift afschrift) {
         afschrift.save();
     }

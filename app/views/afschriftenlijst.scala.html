@@ -1,5 +1,6 @@
-@(currentPage: com.avaje.ebean.Page[Afschrift], currentSortBy: String,
-currentOrder: String, currentFilter: String, currentJaarFilter: String,
+@(currentPage: com.avaje.ebean.Page[Afschrift], saldo: java.math.BigDecimal,
+currentSortBy: String, currentOrder: String, 
+currentFilter: String, currentJaarFilter: String,
 currentVerantwoordFilter: String)
 
 @****************************************
@@ -44,7 +45,8 @@ currentVerantwoordFilter: String)
 }
 
 @main("Lijst afschriften") {
-    <h1 id="homeTitle">@Messages("Bankafschriften", currentPage.getTotalRowCount)</h1>
+    <h1 id="homeTitle">@Messages("Bankafschriften")</h1>
+    <p>Huidig saldo: @saldo</p>
     <div id="actions">
         
         <form action="@link(0, "lid.name")" method="GET" id="filterform">

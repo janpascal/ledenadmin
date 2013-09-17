@@ -148,24 +148,24 @@
 
         $(document).on('click','.removePersoon', function(e) {
             $(this).parents('.persoon').remove()
-            renumber()
+            renumber('persoon', 'personen')
         });
 
         $(document).on('click','.removeRekening', function(e) {
             $(this).parents('.bankrekening').remove()
-            renumber()
+            renumber('bankrekening', 'bankrekeningen')
         });
 
         $(document).on('click', '.addPersoon', function(e) {
             var template = $('.persoon_template')
             template.before('<div class="clearfix persoon">' + template.html() + '</div>')
-            renumber()
+            renumber('persoon', 'personen')
         });
 
         $(document).on('click', '.addRekening', function(e) {
             var template = $('.bankrekening_template')
             template.before('<div class="clearfix bankrekening">' + template.html() + '</div>')
-            renumber()
+            renumber('bankrekening', 'bankrekeningen')
         });
 
         $('#form').submit(function() {
@@ -173,28 +173,19 @@
             $('.bankrekening_template').remove()
         });
 
+        var renumber= function(topclass,name) {
+            $('.'+topclass).each(function(i) {
+                $(this).find('input').each(function() {
+                    var pattern=new RegExp(name+'\\[.+\\]','g');
+                    $(this).attr('name', $(this).attr('name').replace(pattern, name+'[' + i + ']'))
+                })
+            })
+        }
 
-        // Rename fields to have a coherent payload like:
-        // FIXME DRY violation alert 
-        var renumber = function() {
-            $('.persoonsnaam').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
-            })
-            $('.persoonsemail').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
-            })
-            $('.persoonsaccountname').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
-            })
-            $('.persoonspassword').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
-            })
-            $('.persoonsid').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/personen\[.+\]/g, 'personen[' + i + ']'))
-            })
-            $('.bankrekening input').each(function(i) {
-                $(this).attr('name', $(this).attr('name').replace(/bankrekeningen\[.+\]/g, 'bankrekeningen[' + i + ']'))
-            })
+        // Rename fields to have a coherent payload
+        var renumber_all = function() {
+            renumber('persoon', 'personen')
+            renumber('bankrekening', 'bankrekeningen')
         }
 
     </script>

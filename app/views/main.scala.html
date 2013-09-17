@@ -26,6 +26,7 @@
                 <li><a href="@routes.Leden.lijst()">Ledenlijst</a></li>
                 @restrict(la(as("bestuur"))){
                     <li><a href="@routes.Leden.betaalStatus">Betaalstatus</a></li>
+                    <li><a href="@routes.Facturen.showContributieOverzicht">Contributie</a></li>
                 }
                 @restrict(la(as("penningmeester"))){
                     <li><a href="@routes.Afschriften.lijst()">Afschriften</a></li>

@@ -224,6 +224,41 @@ public class Factuur extends Model {
       return jaren;
    }
 
+    public static class YearSummary {
+        public BigDecimal total; 
+        public BigDecimal paid; 
+        public Integer paidYears; 
+        public BigDecimal open; 
+        public Integer openYears; 
+    }
+
+   public static YearSummary feesSummary(Integer year) {
+      YearSummary result = new YearSummary();
+      String sql = "select sum(bedrag) as total from factuur where type=:type and jaar=:year";
+      SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+      sqlQuery.setParameter("year", year);      
+      sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+      SqlRow row = sqlQuery.findUnique();
+      result.total = row.getBigDecimal("total");
+
+      sql = "select sum(bedrag) as total, count(bedrag) as number from factuur where type=:type and jaar=:year and betaling_id is not null";
+      sqlQuery = Ebean.createSqlQuery(sql);
+      sqlQuery.setParameter("year", year);      
+      sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+      row = sqlQuery.findUnique();
+      result.paid = row.getBigDecimal("total");
+      result.paidYears = row.getInteger("number");
+
+      sql = "select sum(bedrag) as total, count(bedrag) as number from factuur where type=:type and jaar=:year and betaling_id is null";
+      sqlQuery = Ebean.createSqlQuery(sql);
+      sqlQuery.setParameter("year", year);      
+      sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+      row = sqlQuery.findUnique();
+      result.open= row.getBigDecimal("total");
+      result.openYears = row.getInteger("number");
+      return result;
+   }
+
     public List<Afschrift> possiblePayments() {
         if(lid==null || lid.bankrekeningen.isEmpty()) {
           if (betaling != null) {

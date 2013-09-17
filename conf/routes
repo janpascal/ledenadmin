@@ -47,6 +47,7 @@ POST    /facturen/wisBetaling/:factuurId  controllers.Facturen.wisBetaling(factu
 GET     /facturen/new_invoices            controllers.Facturen.newInvoicesForm()
 POST    /facturen/create_new_invoices     controllers.Facturen.createNewInvoices()
 POST    /facturen/delete/:id              controllers.Facturen.deleteInvoice(id: Long)
+GET     /facturen/contributieoverzicht controllers.Facturen.showContributieOverzicht()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

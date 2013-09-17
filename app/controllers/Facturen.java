@@ -16,6 +16,7 @@ import play.*;
 import play.data.Form;
 import static play.data.Form.*;
 import play.data.DynamicForm;
+import play.db.ebean.*;
 import com.avaje.ebean.*;
 import play.libs.F.Promise;
 import play.libs.F.Function;
@@ -125,5 +126,15 @@ public class Facturen extends Controller {
       }
       flash("success", facturen.size()+" facturen gegenereerd");
       return redirect(routes.Facturen.list()); 
+    }
+
+    @Restrict({@Group(Persoon.BESTUUR_ROLE),@Group(Persoon.ADMIN_ROLE)})
+    public static Result showContributieOverzicht() throws Exception {
+        List<Integer> years = Factuur.jarenMetContributieFacturen();
+        Map<Integer,Factuur.YearSummary> overview = new TreeMap<Integer,Factuur.YearSummary>();
+        for(Integer year: years) {
+          overview.put(year, Factuur.feesSummary(year));
+        }
+        return ok(contributieoverzicht.render(overview));
     }
 }

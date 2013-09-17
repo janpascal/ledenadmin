@@ -1,0 +1,33 @@
+@(years: Map[Integer,Factuur.YearSummary])
+
+@import helper._
+
+@main("Overzicht contributie per jaar") {
+
+    <h1>Overzicht contributie</h1>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+        <th>Jaar</th>
+        <th>Totaal bedrag</th>
+        <th>Betaald bedrag</th>
+        <th>Betaald aantal</th>
+        <th>Open bedrag</th>
+        <th>Open aantal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for((year,summary) <- years) {
+          <tr>
+            <td>@year</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.total)</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.paid)</td>
+            <td>@summary.paidYears</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.open)</td>
+            <td>@summary.openYears</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+}

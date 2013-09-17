@@ -2,17 +2,27 @@
 String, jaren: String, bedrag: java.math.BigDecimal)
 Geacht lid,
 
-Uit mijn administratie is gebleken dat u achter loopt in het betalen van de
-contributie. De contributie over het jaar of de jaren @jaren is nog niet
-overgemaakt. Zou u ervoor willen zorgen dat de openstaande contributie,
-€@utils.FormatHelper.formatCurrency(bedrag, "0.00"), zo spoedig mogelijk alsnog wordt overgemaakt?
-U kunt de contributie overmaken op de bankrekening van de vereniging, 
-nummer @bankrekening ten name van @naamVereniging, onder vermelding
-van "Contributie @jaren".
+In het verleden is de contributie van de vereniging niet altijd
+op de juiste wijze geïnd. Zo is pas in het voorjaar van 2012
+verzocht tot het betalen van de contributie over het jaar 2011.
+Dit heeft de nodige onduidelijkheid veroorzaakt, waardoor veel
+leden nu denken dat zij de contributie over het jaar 2012 al
+hebben betaald. Om orde op zaken te stellen heb ik de
+contributiebetalingen van alle leden sinds 2010 op een rijtje
+gezet. Uw persoonlijk overzicht treft u hieronder aan.
 
-Mocht u dit bericht ten onrechte ontvangen, dan is er iets mis in mijn
-administratie. Kunt u me dan laten weten op welke datum u de contributie(s) hebt
-betaald?
+Uit mijn administratie is gebleken dat u achter loopt in het
+betalen van de contributie. De contributie over het jaar of de
+jaren @jaren is nog niet overgemaakt. Zou u ervoor 
+willen zorgen dat de openstaande contributie, €@utils.FormatHelper.formatCurrency(bedrag, "0.00"), zo spoedig
+mogelijk alsnog wordt overgemaakt?  U kunt de contributie
+overmaken op de bankrekening van de vereniging, nummer
+@bankrekening ten name van @naamVereniging, 
+onder vermelding van "Contributie @jaren".
+
+Mocht u dit bericht ten onrechte ontvangen, dan is er iets mis in
+mijn administratie. Kunt u me dan laten weten op welke datum u de
+contributie(s) hebt betaald?
 
 Alvast hartelijk dank voor uw betaling.
 

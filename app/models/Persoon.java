@@ -97,7 +97,6 @@ public class Persoon extends Model implements Subject {
       return null;
     }
 
-    @Override
     public String getIdentifier()
     {
         return accountName;

@@ -232,7 +232,8 @@ public class Factuur extends Model {
         public Integer openYears; 
     }
 
-   public static YearSummary feesSummary(Integer year) {
+// stateAtYEar: calculate summary as it was at the end of the given year
+   public static YearSummary feesSummary(Integer year, Integer stateAtYear) {
       YearSummary result = new YearSummary();
       String sql = "select sum(bedrag) as total from factuur where type=:type and jaar=:year";
       SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
@@ -241,18 +242,27 @@ public class Factuur extends Model {
       SqlRow row = sqlQuery.findUnique();
       result.total = row.getBigDecimal("total");
 
-      sql = "select sum(bedrag) as total, count(bedrag) as number from factuur where type=:type and jaar=:year and betaling_id is not null";
+      sql = "select sum(factuur.bedrag) as total, " +
+            "       count(factuur.bedrag) as number "+
+            "from factuur join afschrift on afschrift.id=factuur.betaling_id "+
+            "where type=:type and jaar=:year and YEAR(afschrift.datum)<=:stateAtYear";
       sqlQuery = Ebean.createSqlQuery(sql);
       sqlQuery.setParameter("year", year);      
       sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+      sqlQuery.setParameter("stateAtYear", stateAtYear);
       row = sqlQuery.findUnique();
       result.paid = row.getBigDecimal("total");
       result.paidYears = row.getInteger("number");
 
-      sql = "select sum(bedrag) as total, count(bedrag) as number from factuur where type=:type and jaar=:year and betaling_id is null";
+      sql = "select sum(factuur.bedrag) as total, "+
+            "       count(factuur.bedrag) as number "+
+            "from factuur LEFT JOIN afschrift on afschrift.id=factuur.betaling_id "+
+            "where type=:type and factuur.jaar=:year and " +
+            "(betaling_id is null OR YEAR(afschrift.datum)>:stateAtYear)";
       sqlQuery = Ebean.createSqlQuery(sql);
       sqlQuery.setParameter("year", year);      
       sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+      sqlQuery.setParameter("stateAtYear", stateAtYear);
       row = sqlQuery.findUnique();
       result.open= row.getBigDecimal("total");
       result.openYears = row.getInteger("number");

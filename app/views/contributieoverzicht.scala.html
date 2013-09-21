@@ -1,4 +1,4 @@
-@(years: Map[Integer,Factuur.YearSummary])
+@(years: Map[Integer,Factuur.YearSummary], stateAtYear: Integer)
 @* @(years: Map[Integer,Factuur.YearSummary], payments: Map[Integer,Map[Integer,BigDecimal]]) *@
 
 @import helper._
@@ -7,7 +7,17 @@
 
     <h1>Overzicht contributie</h1>
 
-    <h2>Openstaand en betaald per contributiejaar</h2>
+    <div id="actions">
+        
+        <form action="@routes.Facturen.showContributieOverzicht()" method="GET" id="filterform">
+            Stand van zaken ultimo: <input type="search" id="searchbox" name="stateAtYear"
+            value="@stateAtYear" placeholder="Stand van zaken ultimo...">
+            <input type="submit" id="searchsubmit" value="Wijzig" class="btn btn-primary">
+        </form>
+        
+    </div>
+
+    <h2>Openstaand en betaald per contributiejaar (stand ultimo @stateAtYear)</h2>
 
     <table class="table table-striped">
       <thead>

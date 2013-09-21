@@ -133,13 +133,15 @@ public class Facturen extends Controller {
     }
 
     @Restrict({@Group(Persoon.BESTUUR_ROLE),@Group(Persoon.ADMIN_ROLE)})
-    public static Result showContributieOverzicht() throws Exception {
+    public static Result showContributieOverzicht(int stateAtYear) throws Exception {
+        Map<String, String[]> params = request().queryString();
+        if(stateAtYear==0) stateAtYear=2013; // FIXME current year
         List<Integer> years = Factuur.jarenMetContributieFacturen();
         Map<Integer,Factuur.YearSummary> overview = new TreeMap<Integer,Factuur.YearSummary>();
         for(Integer year: years) {
-          overview.put(year, Factuur.feesSummary(year));
+          overview.put(year, Factuur.feesSummary(year, stateAtYear));
         }
-        return ok(contributieoverzicht.render(overview));
+        return ok(contributieoverzicht.render(overview, stateAtYear));
     }
 
     @Restrict({@Group(Persoon.BESTUUR_ROLE),@Group(Persoon.ADMIN_ROLE)})

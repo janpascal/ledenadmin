@@ -11,6 +11,10 @@ import java.text.DecimalFormat;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
+
 import models.*;
 import play.*;
 import play.data.Form;
@@ -136,5 +140,61 @@ public class Facturen extends Controller {
           overview.put(year, Factuur.feesSummary(year));
         }
         return ok(contributieoverzicht.render(overview));
+    }
+
+    @Restrict({@Group(Persoon.BESTUUR_ROLE),@Group(Persoon.ADMIN_ROLE)})
+    public static Result paymentsPerYear() throws Exception {
+        Map<String, String[]> params = request().queryString();
+
+        Factuur.FeePayments data = Factuur.feePaymentsOverview();
+
+        ObjectNode result = Json.newObject();
+        //result.put("sEcho", Integer.valueOf(params.get("sEcho")[0]));
+        //result.put("iTotalRecords", data.paymentYears.size());
+        //result.put("iTotalDisplayRecords", data.paymentYears.size());
+
+        ArrayNode an = result.putArray("aaData");
+        
+        for(Integer year: data.paymentYears) {
+            ObjectNode row = Json.newObject();
+            row.put("0", year);
+            Map<Integer,BigDecimal> foryear = data.payments.get(year);
+            if (foryear != null) {
+                BigDecimal total = new BigDecimal(0);
+                for(int i=0; i<data.feeYears.size(); i++) {
+                  Integer feeYear = data.feeYears.get(i);
+                  BigDecimal amount = foryear.get(feeYear);
+                  row.put(""+(i+1), amount);
+                  if (amount!=null) total = total.add(amount);
+                }
+                row.put(""+(data.feeYears.size()+1), total);
+            }
+            an.add(row);
+        } 
+
+        ArrayNode ac = result.putArray("aoColumnDefs");
+        ObjectNode row = Json.newObject();
+        row.put("sTitle", "In kalenderjaar");
+        ArrayNode targets = row.putArray("aTargets");
+        targets.add(0);
+        ac.add(row);
+
+        for(int i=0; i<data.feeYears.size(); i++) {
+        //for(int i=0; i<2; i++) {
+            Integer year = data.feeYears.get(i);
+            row = Json.newObject();
+            row.put("sTitle", "Betaald voor "+year);
+            targets = row.putArray("aTargets");
+            targets.add(i+1);
+            ac.add(row);
+        }
+
+        row = Json.newObject();
+        row.put("sTitle", "Totaal betaald");
+        targets = row.putArray("aTargets");
+        targets.add(data.feeYears.size()+1);
+        ac.add(row);
+        
+        return ok(result);
     }
 }

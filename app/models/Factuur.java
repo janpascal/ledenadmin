@@ -259,6 +259,51 @@ public class Factuur extends Model {
       return result;
    }
 
+    public static class FeePayments {
+        public List<Integer> paymentYears;
+        public List<Integer> feeYears;
+        public Map<Integer,Map<Integer,BigDecimal>> payments;
+    }
+
+    public static FeePayments feePaymentsOverview() {
+        FeePayments result = new FeePayments();
+        result.feeYears = jarenMetContributieFacturen();
+
+        String sql = "select distinct YEAR(afschrift.datum) as betalingsjaar "+
+           "from afschrift JOIN factuur ON factuur.betaling_id=afschrift.id "+
+           "where factuur.type=:type order by betalingsjaar asc";
+        SqlQuery sqlQuery = Ebean.createSqlQuery(sql);
+        sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+        List<SqlRow> list = sqlQuery.findList();
+        result.paymentYears = new ArrayList<Integer>(list.size());
+        for (SqlRow row: list) {
+            result.paymentYears.add(row.getInteger("betalingsjaar"));
+        }
+        // TODO: generate feeYears and paymentYears from following query
+        sql = 
+           "SELECT YEAR(afschrift.datum) as paymentyear, "+
+           "       factuur.jaar as feeyear, "+
+           "       sum(factuur.bedrag) as amount " +
+           "FROM `afschrift` JOIN factuur ON factuur.betaling_id=afschrift.id "+
+           "WHERE factuur.`type`=:type "+
+           "GROUP BY paymentyear ASC, feeyear ASC";
+        sqlQuery = Ebean.createSqlQuery(sql);
+        sqlQuery.setParameter("type", FACTUUR_CONTRIBUTIE);
+        list = sqlQuery.findList();
+        result.payments = new TreeMap<Integer,Map<Integer,BigDecimal>>();
+        for (SqlRow row: list) {
+            Integer feeYear = row.getInteger("feeyear");
+            Integer paymentYear = row.getInteger("paymentyear");
+            if (!result.payments.containsKey(paymentYear)) {
+                result.payments.put(paymentYear, new TreeMap<Integer,BigDecimal>());
+            }
+            Map<Integer,BigDecimal> foryear = result.payments.get(paymentYear);
+            foryear.put(feeYear, row.getBigDecimal("amount"));
+        }
+
+        return result;
+    }
+
     public List<Afschrift> possiblePayments() {
         if(lid==null || lid.bankrekeningen.isEmpty()) {
           if (betaling != null) {

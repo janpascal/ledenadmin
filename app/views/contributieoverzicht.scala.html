@@ -1,4 +1,5 @@
 @(years: Map[Integer,Factuur.YearSummary])
+@* @(years: Map[Integer,Factuur.YearSummary], payments: Map[Integer,Map[Integer,BigDecimal]]) *@
 
 @import helper._
 
@@ -6,10 +7,12 @@
 
     <h1>Overzicht contributie</h1>
 
+    <h2>Openstaand en betaald per contributiejaar</h2>
+
     <table class="table table-striped">
       <thead>
         <tr>
-        <th>Jaar</th>
+        <th>Contributiejaar</th>
         <th>Totaal bedrag</th>
         <th>Betaald bedrag</th>
         <th>Betaald aantal</th>
@@ -30,4 +33,72 @@
         }
       </tbody>
     </table>
+
+    <h2>Betalingen per kalenderjaar</h2>
+@*
+    <table class="table table-striped">
+      <thead>
+        <tr>
+        <th>In kalenderjaar</th>
+        <th>Betaald voor jaar x</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for((year,summary) <- payments) {
+          <tr>
+            <td>@year</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.total)</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.paid)</td>
+            <td>@summary.paidYears</td>
+	    <td>@utils.FormatHelper.formatCurrency(summary.open)</td>
+            <td>@summary.openYears</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+*@
+    <table id="payments_table" class='table table-striped table-bordered'>
+      <thead>
+        <tr>
+          <th>Name</th>
+          @for((year,summary) <- years) {
+              <th>Title</th>
+          }
+          <th>Totaal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Row 1 Data 1</td>
+          <td>Row 1 Data 2</td>
+          <td>etc</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script type="text/javascript">
+      /* Table initialisation */
+      $(document).ready(function() {
+        $.ajax( {
+            "dataType": 'text',
+            "type": "GET",
+            "url": "@routes.Facturen.paymentsPerYear()",
+            "success": function (dataStr) {
+                var data = eval( '('+dataStr+')' );
+                $('#payments_table').dataTable({
+                    "aaData": data.aaData,
+                    "aoColumnDefs": data.aoColumnDefs,
+                    "bProcessing": true,
+                    "aaSorting": [[ 0, "asc" ]],
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers",
+                    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>"
+                });
+            }
+        } );
+          $.extend( $.fn.dataTableExt.oStdClasses, {
+                "sWrapper": "dataTables_wrapper form-inline"
+          } );
+      });
+    </script>
 }

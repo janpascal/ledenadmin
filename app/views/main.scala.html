@@ -26,6 +26,7 @@
               <ul class="nav">
                 <li><a href="@routes.Leden.lijst()">Ledenlijst</a></li>
                 @restrict(la(as("bestuur"))){
+                    <li><a href="@routes.Leden.presentielijst()">Presentielijst</a></li>
                     <li><a href="@routes.Leden.betaalStatus">Betaalstatus</a></li>
                     <li><a href="@routes.Facturen.showContributieOverzicht(0)">Contributie</a></li>
                 }

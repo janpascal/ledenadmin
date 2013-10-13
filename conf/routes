@@ -11,6 +11,7 @@ GET     /account/:id                controllers.Application.accountSettings(id: 
 POST    /account/:id                controllers.Application.saveAccount(id: Long)
 
 GET     /leden/lijst                controllers.Leden.lijst()
+GET     /leden/presentielijst                controllers.Leden.presentielijst()
 GET     /leden/bewerk/:id           controllers.Leden.bewerkLid(id: Long)
 GET     /leden/nieuw                controllers.Leden.nieuwLid()
 POST	/leden/savelid/:id	    controllers.Leden.saveLid(id: Long)

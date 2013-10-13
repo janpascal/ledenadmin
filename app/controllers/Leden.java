@@ -38,6 +38,12 @@ public class Leden extends Controller {
     }
     
     @Restrict({@Group(Persoon.BESTUUR_ROLE)})
+    public static Result presentielijst() {
+        List<Lid> leden = Lid.find.orderBy("address").findList();
+        return ok(presentielijst.render(leden));
+    }
+    
+    @Restrict({@Group(Persoon.BESTUUR_ROLE)})
     public static Result bewerkLid(Long id) {
         Form<Lid> myForm = form(Lid.class).fill(Lid.find.byId(id));
         Lid lid = Lid.find.byId(id);

@@ -125,6 +125,10 @@ public class Lid extends Model {
           && ( (lidTot==null) || (lidTot.after(jan1)));
     }
 
+    public boolean isHuidigLid() {
+      return (lidTot==null) || (lidTot.after(new Date()));
+    }
+
     public Bankrekening addRekening(String nummer) {
       Bankrekening rek = new Bankrekening(this, nummer);
       bankrekeningen.add(rek);

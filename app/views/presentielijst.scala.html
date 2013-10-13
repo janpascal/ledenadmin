@@ -1,0 +1,29 @@
+@(leden: List[Lid])
+
+@main("Presentielijst") {
+    <h1>Presentielijst</h1>
+    <table class="table table-bordered"> 
+    <tr>
+    <th>lidnr</th>
+    <th>Paraaf</th>
+    <th>Adres</th>
+    <th>Namen</th>
+    </tr>
+	@for(lid <- leden) {
+          @if(lid.isHuidigLid()) {
+          <tr>
+			  <td>@lid.id</td>
+			  <td>&nbsp;</td>
+			  <td>@lid.address</td>
+                          <td>@for((p,i) <- lid.personen.zipWithIndex) {
+                              @p.name
+                              @if(p.email!=null && !p.email.isEmpty) {
+                                (@p.email)
+                              }
+                              @if(i != lid.personen.size-1) { , }
+                          }</td>
+	      </tr>
+	} 
+        }
+    </table>
+}

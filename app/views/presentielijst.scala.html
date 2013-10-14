@@ -8,22 +8,31 @@
     <th>Paraaf</th>
     <th>Adres</th>
     <th>Namen</th>
+    <th>Email</th>
     </tr>
-	@for(lid <- leden) {
-          @if(lid.isHuidigLid()) {
+	@for(lid <- leden.filter( _.isHuidigLid() ) ) {
           <tr>
 			  <td>@lid.id</td>
 			  <td>&nbsp;</td>
 			  <td>@lid.address</td>
                           <td>@for((p,i) <- lid.personen.zipWithIndex) {
-                              @p.name
+                              @p.name@if(i != lid.personen.size-1){,}
+                          }</td>
+                          <td>@for((p,i) <- lid.personen.zipWithIndex) {
                               @if(p.email!=null && !p.email.isEmpty) {
-                                (@p.email)
+                                @p.email
                               }
-                              @if(i != lid.personen.size-1) { , }
                           }</td>
 	      </tr>
-	} 
+        }
+	@for(i <- (0 until 10) ) {
+          <tr>
+			  <td></td>
+			  <td>&nbsp;</td>
+			  <td></td>
+                          <td></td>
+                          <td></td>
+	      </tr>
         }
     </table>
 }

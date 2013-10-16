@@ -103,3 +103,30 @@ table.table thead .sorting_desc { background: url('images/sort_desc.png') no-rep
  
 table.table thead .sorting_asc_disabled { background: url('images/sort_asc_disabled.png') no-repeat center right; }
 table.table thead .sorting_desc_disabled { background: url('images/sort_desc_disabled.png') no-repeat center right; }
+
+#searchsubmit {
+    margin-bottom: 10px;
+}
+
+@media print {
+  a[href]:after {
+    content: none;
+  }
+
+  *.btn {
+    display: none;
+  }
+  a.btn {
+    display: none;
+  }
+  input.btn {
+    display: none;
+  }
+  a.ui-button {
+    display: none;
+  }
+  .table-condensed th,
+  .table-condensed td {
+      font-size: xx-small;
+  }
+}

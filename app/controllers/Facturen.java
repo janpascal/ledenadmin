@@ -36,10 +36,10 @@ import views.html.*;
 public class Facturen extends Controller {
 
     public static Result list() {
-      return lijst(0, "datum", "asc", "", "", ""); 
+      return lijst(0, 15, "datum", "asc", "", "", ""); 
     }
 
-    public static Result lijst(int page, String sortBy, String order, String
+    public static Result lijst(int page, int pageSize, String sortBy, String order, String
     filter, String jaarFilter, String betaaldFilter) {
         int jaar;
         try {
@@ -47,11 +47,11 @@ public class Facturen extends Controller {
         } catch (NumberFormatException e) {
             jaar = -1;
         }
-        Page<Factuur> currentPage = Factuur.page(page, 15, sortBy, order, filter, jaar, betaaldFilter);
+        Page<Factuur> currentPage = Factuur.page(page, pageSize, sortBy, order, filter, jaar, betaaldFilter);
         //Logger.info("sortBy: " + sortBy);
         return ok(
             facturenlijst.render(
-                currentPage,
+                currentPage, pageSize,
                 sortBy, order, filter, jaarFilter, betaaldFilter
             )
         );

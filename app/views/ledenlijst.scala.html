@@ -26,7 +26,9 @@
     <th>adres</th>
     <th>lid sinds</th>
     <th>lid tot</th>
-    <th>bankrekeningen</th>
+    @restrict(la(as("bestuur"),as("admin"))){
+      <th>bankrekeningen</th>
+    }
     </tr>
 	@for(lid <- leden) {
           <tr>
@@ -47,9 +49,11 @@
 			  <td>@if(lid.lidTot!=null) {
 			  		@lid.lidTot.format("dd/MM/yyyy")
 			  	  } else { &mdash; } </td>
-                          <td>@for( rek <- lid.bankrekeningen ) {
-                            @rek.nummer
-                          }</td>
+                          @restrict(la(as("bestuur"),as("admin"))){
+                              <td>@for( rek <- lid.bankrekeningen ) {
+                                @rek.nummer
+                              }</td>
+                          }
 	      </tr>
 	} 
     </table>

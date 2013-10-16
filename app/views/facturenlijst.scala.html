@@ -1,4 +1,5 @@
-@(currentPage: com.avaje.ebean.Page[Factuur], currentSortBy: String,
+@(currentPage: com.avaje.ebean.Page[Factuur], 
+pageSize: Integer, currentSortBy: String,
 currentOrder: String, currentFilter: String, currentJaarFilter: String,
 currentBetaaldFilter: String)
 
@@ -24,7 +25,7 @@ currentBetaaldFilter: String)
     }
     
     // Generate the link
-    routes.Facturen.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter, currentBetaaldFilter)
+    routes.Facturen.lijst(newPage, pageSize, sortBy, order, currentFilter, currentJaarFilter, currentBetaaldFilter)
 }
 
 
@@ -69,7 +70,7 @@ currentBetaaldFilter: String)
         
     } else {
        
-        <table class="table table-striped">
+        <table class="table table-striped table-condensed">
             <thead>
                 <tr>
                     @header("datum", "Datum")
@@ -122,11 +123,11 @@ currentBetaaldFilter: String)
         <div id="pagination" class="pagination">
             <ul>
                 @if(currentPage.hasPrev) {
-                    <li class="prev">
+                    <li class="prev hidden-print">
                         <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
                     </li>
                 } else {
-                    <li class="prev disabled">
+                    <li class="prev disabled hidden-print">
                         <a>&larr; Previous</a>
                     </li>
                 }
@@ -134,11 +135,11 @@ currentBetaaldFilter: String)
                     <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
                 </li>
                 @if(currentPage.hasNext) {
-                    <li class="next">
+                    <li class="next hidden-print">
                         <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
                     </li>
                 } else {
-                    <li class="next disabled">
+                    <li class="next disabled hidden-print">
                         <a>Next &rarr;</a>
                     </li>
                 }

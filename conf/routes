@@ -30,7 +30,7 @@ GET     /probes/verify/:token       controllers.Probes.verify(token: String)
 
 # Afschriften
 GET     /afschriften/list                controllers.Afschriften.list()
-GET     /afschriften/lijst                controllers.Afschriften.lijst(p:Int ?= 0, s ?= "datum", o ?= "asc", f ?= "", fjaar ?= "", fverantw?= "")
+GET     /afschriften/lijst                controllers.Afschriften.lijst(p:Int ?= 0, ps:Int ?= 15, s ?= "datum", o ?= "asc", f ?= "", fjaar ?= "", fverantw?= "")
 GET     /afschriften/toon/:id      controllers.Afschriften.toon(id: Long)
 GET     /afschriften/csvimport    controllers.Afschriften.csvimport()
 GET     /afschriften/betalingenimport    controllers.Afschriften.csvBetalingenImport()
@@ -39,7 +39,7 @@ POST	/afschriften/uploadbetalingen   controllers.Afschriften.uploadBetalingen()
 POST    /afschriften/genereerfactuur/:id controllers.Afschriften.genereerFactuur(id: Long)
 
 GET     /facturen/list                 controllers.Facturen.list()
-GET     /facturen/lijst                   controllers.Facturen.lijst(p:Int ?= 0, s ?= "datum", o ?= "asc", f ?= "", fjaar ?= "", fbetaald ?= "")
+GET     /facturen/lijst                   controllers.Facturen.lijst(p:Int ?= 0, ps:Int ?= 15, s ?= "datum", o ?= "asc", f ?= "", fjaar ?= "", fbetaald ?= "")
 GET     /facturen/toon/:id                controllers.Facturen.toon(id: Long)
 GET     /facturen/bewerk/:id           controllers.Facturen.bewerkFactuur(id: Long)
 POST	/facturen/savefactuur/:id	    controllers.Facturen.saveFactuur(id: Long)

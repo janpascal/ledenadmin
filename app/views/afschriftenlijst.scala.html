@@ -1,4 +1,5 @@
-@(currentPage: com.avaje.ebean.Page[Afschrift], saldo: java.math.BigDecimal,
+@(currentPage: com.avaje.ebean.Page[Afschrift], 
+pageSize: Integer, saldo: java.math.BigDecimal,
 currentSortBy: String, currentOrder: String, 
 currentFilter: String, currentJaarFilter: String,
 currentVerantwoordFilter: String)
@@ -25,7 +26,7 @@ currentVerantwoordFilter: String)
     }
     
     // Generate the link
-    routes.Afschriften.lijst(newPage, sortBy, order, currentFilter, currentJaarFilter)
+    routes.Afschriften.lijst(newPage, pageSize, sortBy, order, currentFilter, currentJaarFilter)
 }
 
 
@@ -70,7 +71,7 @@ currentVerantwoordFilter: String)
         
     } else {
        
-        <table class="table table-striped">
+        <table class="table table-striped table-condensed">
             <thead>
                 <tr>
                     @header("datum", "Datum")
@@ -132,11 +133,11 @@ currentVerantwoordFilter: String)
         <div id="pagination" class="pagination">
             <ul>
                 @if(currentPage.hasPrev) {
-                    <li class="prev">
+                    <li class="prev hidden-print">
                         <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
                     </li>
                 } else {
-                    <li class="prev disabled">
+                    <li class="prev disabled hidden-print">
                         <a>&larr; Previous</a>
                     </li>
                 }
@@ -144,11 +145,11 @@ currentVerantwoordFilter: String)
                     <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
                 </li>
                 @if(currentPage.hasNext) {
-                    <li class="next">
+                    <li class="next hidden-print">
                         <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
                     </li>
                 } else {
-                    <li class="next disabled">
+                    <li class="next disabled hidden-print">
                         <a>Next &rarr;</a>
                     </li>
                 }

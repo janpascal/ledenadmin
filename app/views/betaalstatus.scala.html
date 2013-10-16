@@ -4,7 +4,7 @@
     <h1>Betaalstatus</h1>
     <table class="table table-striped"> 
     <tr>
-    <th></th>
+    <th class="hidden-print"></th>
     <th>lidnr</th>
     <th>naam</th>
     <th>adres</th>
@@ -14,10 +14,12 @@
     </tr>
 	@for(lid <- leden) {
           <tr>
-              <td><a class="btn btn-info" href="@routes.Leden.toonHerinnering(lid.id)">Mail</a></td>
-			  <td>@lid.id</td>
-			  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.getFirstName()</a></td>
-			  <td>@lid.address</td>
+              <td class="hidden-print">
+                  <a class="btn btn-info" href="@routes.Leden.toonHerinnering(lid.id)">Mail</a>
+              </td>
+        	<td>@lid.id</td>
+		  <td><a href="@routes.Leden.bewerkLid(lid.id)">@lid.getFirstName()</a></td>
+		  <td>@lid.address</td>
    		      @for(jaar <- jaren) {
 			   	<td>
                                    @if(lid.lidInJaar(jaar)) {

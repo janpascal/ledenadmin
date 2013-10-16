@@ -32,10 +32,10 @@ import views.html.*;
 public class Afschriften extends Controller {
   
     public static Result list() throws ParseException {
-      return lijst(0, "datum", "asc", "", "", ""); 
+      return lijst(0, 15, "datum", "asc", "", "", ""); 
     }
 
-    public static Result lijst(int page, String sortBy, String order, 
+    public static Result lijst(int page, int pageSize, String sortBy, String order, 
         String filter, String jaarFilter, String verantwoordFilter) throws
         ParseException{
 
@@ -45,7 +45,7 @@ public class Afschriften extends Controller {
         } catch (NumberFormatException e) {
             jaar = -1;
         }
-        Page<Afschrift> currentPage = Afschrift.page(page, 15, sortBy, order, filter, jaar, verantwoordFilter);
+        Page<Afschrift> currentPage = Afschrift.page(page, pageSize, sortBy, order, filter, jaar, verantwoordFilter);
         //Logger.info("sortBy: " + sortBy);
         Configuration conf = Play.application().configuration();
         BigDecimal startSaldo = new BigDecimal(conf.getString("ledenadmin.startsaldo.bedrag"));
@@ -53,7 +53,7 @@ public class Afschriften extends Controller {
         Date startDate = dateFormatter.parse(conf.getString("ledenadmin.startsaldo.datum"));
         BigDecimal saldo = startSaldo.add(Afschrift.saldo(startDate,new Date()));
         return ok(afschriftenlijst.render(
-            currentPage, saldo,
+            currentPage, pageSize, saldo,
             sortBy, order, filter, jaarFilter, verantwoordFilter
         ));
     }

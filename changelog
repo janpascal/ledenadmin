@@ -1,0 +1,3 @@
+
+Release 1.3.1 (2014-01-04)
+- Fix bug which made new members always have id -1

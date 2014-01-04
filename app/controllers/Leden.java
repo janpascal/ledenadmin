@@ -56,6 +56,7 @@ public class Leden extends Controller {
         Lid lid = new Lid();
         Form<Lid> myForm = form(Lid.class).fill(lid);
         Logger.info("Nieuw lid");
+        Logger.info("id: "+lid.id);
         return ok(editlid.render(-1L, myForm));
     }
     
@@ -88,7 +89,6 @@ public class Leden extends Controller {
         }
         */
         Lid lid = myForm.get();
-        lid.id = id;
         if(id>=0) {
             /*
             for(Persoon p: oldLid.personen) {
